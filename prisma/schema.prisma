@@ -1,0 +1,277 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  engineType    = "library"
+  binaryTargets = ["native", "windows"]
+  output        = "../release/app/node_modules/@prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum StaffRole {
+  ADMIN
+  MANAGER
+  CASHIER
+}
+
+enum OrderStatus {
+  PENDING // En attente de traitement
+  PROCESSING // En cours de préparation
+  SHIPPED // Expédiée
+  DELIVERED // Livrée
+  CANCELLED // Annulée
+}
+
+// Statut global de paiement pour la Commande
+enum PaymentOverallStatus {
+  UNPAID // Non payée
+  PAID // Entièrement payée
+  PARTIALLY_PAID // Partiellement payée
+  REFUNDED // Entièrement remboursée
+  PARTIALLY_REFUNDED // Partiellement remboursée
+  FAILED // Échec du paiement
+}
+
+// Statut pour une transaction de paiement individuelle
+enum PaymentTransactionStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+
+enum DiscountValueType {
+  PERCENTAGE // La réduction est un pourcentage
+  FIXED_AMOUNT // La réduction est un montant fixe
+}
+
+enum DiscountScope {
+  PRODUCT // S'applique à des produits spécifiques
+  CATEGORY // S'applique à tous les produits d'une ou plusieurs catégories spécifiques
+  ORDER // S'applique au total de la commande (ex: code promo)
+}
+
+// Modèles de données
+
+model Staff {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  name      String
+  phone     String?
+  address   String?
+  avatarUrl String?
+  isActive  Boolean   @default(true)
+  password  String // Assurez-vous que ce mot de passe est toujours stocké de manière hachée et sécurisée
+  role      StaffRole // Pas de rôle par défaut, attribution explicite recommandée
+
+  // Relations: Quels éléments sont gérés/traités par ce membre du personnel
+  managedProducts   Product[]  @relation("StaffManagedProducts")
+  managedCategories Category[] @relation("StaffManagedCategories")
+  processedOrders   Order[]    @relation("StaffProcessedOrders")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("staff_members") // Nom de table explicite
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  icon        String? // Peut être un nom d'icône ou une URL
+  products    Product[] // Produits dans cette catégorie
+
+  // Qui gère cette catégorie (optionnel)
+  managingStaff   Staff?  @relation("StaffManagedCategories", fields: [managingStaffId], references: [id])
+  managingStaffId String?
+
+  // Réductions applicables à cette catégorie
+  discounts Discount[] @relation("CategoryDiscounts")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String
+  imageUrl      String
+  price         Decimal // Prix de vente actuel du produit (peut refléter un prix déjà réduit par une promo active)
+  originalPrice Decimal? // Prix original avant toute réduction (utile pour afficher "prix barré")
+  stockQuantity Int
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  orderItems OrderItem[] // Lié aux lignes de commande
+
+  // Qui gère ce produit (optionnel)
+  managingStaff   Staff?  @relation("StaffManagedProducts", fields: [managingStaffId], references: [id])
+  managingStaffId String?
+
+  // Réductions actives ou programmées pour ce produit
+  discounts Discount[] @relation("ProductDiscounts")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name]) // Pour la recherche par nom
+  @@map("products")
+}
+
+model Customer {
+  id      String  @id @default(uuid())
+  name    String
+  email   String  @unique
+  phone   String?
+  address String?
+  orders  Order[] // Commandes passées par ce client
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("customers")
+}
+
+model Order {
+  id             String   @id @default(uuid())
+  orderReference String?  @unique // Référence de commande conviviale (ex: ORD-2025-0001)
+  customerId     String
+  customer       Customer @relation(fields: [customerId], references: [id])
+
+  status          OrderStatus @default(PENDING)
+  shippingAddress String?
+
+  subtotal            Decimal // Somme de OrderItem.lineItemTotal (avant réductions de commande globales et frais)
+  orderDiscountAmount Decimal @default(0) // Montant total des réductions appliquées à la commande globale (ex: code promo)
+  fees                Decimal @default(0) // Frais supplémentaires (livraison, service, taxes spécifiques à la commande)
+  grandTotal          Decimal // Montant final: subtotal - orderDiscountAmount + fees
+
+  items OrderItem[] // Détail des articles commandés
+
+  paymentOverallStatus PaymentOverallStatus @default(UNPAID) // Statut global du paiement de la commande
+  payments             Payment[] // Historique des transactions de paiement pour cette commande
+
+  // Qui a traité/gère cette commande (optionnel)
+  processingStaff   Staff?  @relation("StaffProcessedOrders", fields: [processingStaffId], references: [id])
+  processingStaffId String?
+
+  // Réductions de niveau commande appliquées (ex: codes promo)
+  appliedDiscounts Discount[] @relation("OrderDiscounts")
+
+  // Optionnel: méthode de paiement principale choisie/utilisée si besoin d'un accès rapide
+  primaryPaymentMethod   PaymentMethod? @relation(fields: [primaryPaymentMethodId], references: [id])
+  primaryPaymentMethodId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderReference])
+  @@map("orders")
+}
+
+model OrderItem {
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity           Int
+  originalUnitPrice  Decimal // Prix unitaire du produit au moment de la commande (avant réductions sur cet article)
+  itemDiscountAmount Decimal @default(0) // Réduction appliquée à une seule unité de cet article (ex: promo produit)
+  finalUnitPrice     Decimal // Calculé: originalUnitPrice - itemDiscountAmount
+  lineItemTotal      Decimal // Calculé: finalUnitPrice * quantity
+
+  // Si vous souhaitez tracer quelle réduction spécifique a été appliquée à cet item:
+  // appliedItemDiscountId String?
+  // appliedItemDiscount Discount? @relation("OrderItemSpecificDiscount", fields: [appliedItemDiscountId], references: [id])
+
+  createdAt DateTime @default(now()) // Utile pour savoir quand l'article a été ajouté/confirmé
+  updatedAt DateTime @updatedAt
+
+  @@map("order_items")
+}
+
+model PaymentMethod {
+  id          String  @id @default(uuid())
+  name        String  @unique // Ex: "Carte de crédit", "PayPal", "Virement bancaire"
+  description String?
+  isEnabled   Boolean @default(true) // Pour activer/désactiver des méthodes de paiement
+
+  payments Payment[] // Transactions effectuées avec cette méthode, si vous voulez la relation inverse ici
+  orders   Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("payment_methods")
+}
+
+model Payment {
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  amount          Decimal // Montant de cette transaction
+  paymentMethodId String
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+
+  transactionId String?                  @unique // ID de transaction de la passerelle
+  status        PaymentTransactionStatus @default(PENDING)
+  processedAt   DateTime? // Date et heure du traitement effectif
+  notes         String? // Notes administratives sur ce paiement
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId])
+  @@map("payments")
+}
+
+model Discount {
+  id          String  @id @default(uuid())
+  name        String // Ex: "Soldes d'été", "Coupon BIENVENUE15"
+  description String?
+  code        String? @unique // Pour les coupons (ex: "SUMMER20")
+
+  valueType DiscountValueType
+  value     Decimal // Valeur (ex: 15.00 pour 15% ou 10.00 pour 10€)
+
+  scope DiscountScope
+
+  isActive  Boolean   @default(true)
+  validFrom DateTime?
+  validTo   DateTime?
+
+  minPurchaseAmount Decimal? // Pour scope ORDER, montant minimum d'achat
+  maxDiscountAmount Decimal? // Plafond pour les réductions en pourcentage (ex: 10% jusqu'à 50€)
+
+  usageLimitPerUser Int? // Limite d'utilisation par client (nécessite de lier aux clients)
+  totalUsageLimit   Int? // Limite d'utilisation globale du coupon/de la promo
+  // currentUsageCount Int               @default(0) // Compteur d'utilisation (à incrémenter par la logique applicative)
+
+  // Relations pour spécifier la portée
+  applicableProducts   Product[]  @relation("ProductDiscounts")
+  applicableCategories Category[] @relation("CategoryDiscounts")
+  appliedToOrders      Order[]    @relation("OrderDiscounts") // Pour tracer où les réductions de commande ont été utilisées
+
+  // Priorité de la réduction (si plusieurs peuvent s'appliquer, la plus haute priorité gagne, ou elles se cumulent selon vos règles)
+  // priority             Int?              @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code])
+  @@map("discounts")
+}
