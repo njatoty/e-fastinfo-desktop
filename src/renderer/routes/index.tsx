@@ -17,7 +17,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -32,18 +36,29 @@ export const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} />
+      <Route
+        path="/login"
+        element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+      />
 
-      <Route path="/" element={
-        <ProtectedRoute>
-          <AppLayout />
-        </ProtectedRoute>
-      }>
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        {/* Dashboard */}
         <Route index element={<DashboardPage />} />
-        <Route path="products" element={<ProductsPage />} />
-        <Route path="products/add" element={<AddProductPage />} />
-        <Route path="products/:id" element={<ProductDetailPage />} />
-        <Route path="products/:id/edit" element={<EditProductPage />} />
+        {/* Products */}
+        <Route path="products">
+          <Route index element={<ProductsPage />} />
+          <Route path="add" element={<AddProductPage />} />
+          <Route path=":id" element={<ProductDetailPage />} />
+          <Route path=":id/edit" element={<EditProductPage />} />
+        </Route>
+        {/* Categories */}
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="low-stock" element={<LowStockPage />} />
         <Route path="stock-movements" element={<StockMovementsPage />} />
