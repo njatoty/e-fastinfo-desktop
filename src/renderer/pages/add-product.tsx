@@ -26,39 +26,52 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Card } from '@/components/ui/card';
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Product name must be at least 2 characters.',
-  }).max(100, {
-    message: 'Product name must not exceed 100 characters.',
-  }),
+  name: z
+    .string()
+    .min(2, {
+      message: 'Product name must be at least 2 characters.',
+    })
+    .max(100, {
+      message: 'Product name must not exceed 100 characters.',
+    }),
   categoryId: z.string({
     required_error: 'Please select a category.',
   }),
-  description: z.string().min(10, {
-    message: 'Description must be at least 10 characters.',
-  }).max(500, {
-    message: 'Description must not exceed 500 characters.',
-  }),
+  description: z
+    .string()
+    .min(10, {
+      message: 'Description must be at least 10 characters.',
+    })
+    .max(500, {
+      message: 'Description must not exceed 500 characters.',
+    }),
   imageUrl: z.string().url({
     message: 'Please enter a valid URL for the product image.',
   }),
   price: z.preprocess(
     (val) => parseFloat(val as string),
-    z.number().positive({
-      message: 'Price must be a positive number.',
-    }).min(0.01, {
-      message: 'Price must be at least 0.01.',
-    })
+    z
+      .number()
+      .positive({
+        message: 'Price must be a positive number.',
+      })
+      .min(0.01, {
+        message: 'Price must be at least 0.01.',
+      })
   ),
   stockQuantity: z.preprocess(
     (val) => parseInt(val as string, 10),
-    z.number().int({
-      message: 'Stock quantity must be a whole number.',
-    }).nonnegative({
-      message: 'Stock quantity cannot be negative.',
-    })
+    z
+      .number()
+      .int({
+        message: 'Stock quantity must be a whole number.',
+      })
+      .nonnegative({
+        message: 'Stock quantity cannot be negative.',
+      })
   ),
 });
 
@@ -68,7 +81,7 @@ export function AddProductPage() {
   const { categories, addProduct } = useProducts();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,19 +93,19 @@ export function AddProductPage() {
       stockQuantity: undefined,
     },
   });
-  
+
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    
+
     try {
       const now = new Date().toISOString();
-      
+
       addProduct({
         ...data,
         createdAt: now,
         updatedAt: now,
       });
-      
+
       toast.success('Product added successfully');
       navigate('/products');
     } catch (error) {
@@ -101,11 +114,11 @@ export function AddProductPage() {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
-        <Button 
+        <Button
           variant="outline"
           size="icon"
           onClick={() => navigate('/products')}
@@ -119,8 +132,8 @@ export function AddProductPage() {
           </p>
         </div>
       </div>
-      
-      <div className="mx-auto max-w-2xl space-y-8">
+
+      <Card className="mx-auto max-w-2xl space-y-8">
         <div className="rounded-lg border p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -140,7 +153,7 @@ export function AddProductPage() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="categoryId"
@@ -168,7 +181,7 @@ export function AddProductPage() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="description"
@@ -186,7 +199,7 @@ export function AddProductPage() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={form.control}
                 name="imageUrl"
@@ -194,7 +207,10 @@ export function AddProductPage() {
                   <FormItem>
                     <FormLabel>Image URL</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://example.com/image.jpg" {...field} />
+                      <Input
+                        placeholder="https://example.com/image.jpg"
+                        {...field}
+                      />
                     </FormControl>
                     <FormDescription>
                       Provide a URL to an image of the product.
@@ -203,7 +219,7 @@ export function AddProductPage() {
                   </FormItem>
                 )}
               />
-              
+
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
@@ -223,7 +239,7 @@ export function AddProductPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="stockQuantity"
@@ -244,7 +260,7 @@ export function AddProductPage() {
                   )}
                 />
               </div>
-              
+
               <div className="flex justify-end gap-4">
                 <Button
                   type="button"
@@ -260,7 +276,7 @@ export function AddProductPage() {
             </form>
           </Form>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

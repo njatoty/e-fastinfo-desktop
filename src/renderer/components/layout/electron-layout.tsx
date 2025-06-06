@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { ElectronTopBar } from '../electron-top-bar';
+import { ElectronTopBar } from '../electron-title-bar';
 
 const ElectronLayout = () => {
   return (

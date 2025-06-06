@@ -83,9 +83,10 @@ const createWindow = async () => {
       contextIsolation: true
     },
     disableAutoHideCursor: true,
-    frame: false,
+    // frame: false,
     titleBarStyle: 'hidden'
   });
+
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
   mainWindow.webContents.openDevTools();
@@ -104,6 +105,21 @@ const createWindow = async () => {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  mainWindow.on('maximize', () => {
+    mainWindow?.webContents.send('window-state-changed', { isMaximized: true });
+    console.log('maximized')
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow?.webContents.send('window-state-changed', { isMaximized: false });
+    console.log('unmaximized')
+  });
+
+  mainWindow.on('restore', () => {
+    mainWindow?.webContents.send('window-state-changed', { isMaximized: false })
+    console.log('restored')
+  })
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
@@ -246,13 +262,13 @@ ipcMain.on('config:get-prisma-qe-path', (event) => {
 });
 
 
-// custom menu bars
+// on close event
 ipcMain.on('app:close', (event) => {
-  event.preventDefault();
   mainWindow?.close();
+  event.returnValue = true;
 });
+
 ipcMain.on('app:maximize', (event) => {
-  event.preventDefault();
   if (mainWindow?.isMaximized()) {
     mainWindow.restore();
     event.returnValue = false;
@@ -261,7 +277,8 @@ ipcMain.on('app:maximize', (event) => {
     event.returnValue = true;
   }
 });
+
 ipcMain.on('app:minimize', (event) => {
-  event.preventDefault();
   mainWindow?.minimize();
+  event.returnValue = true;
 });

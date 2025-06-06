@@ -34,6 +34,7 @@ import {
 import { toast } from 'sonner';
 import { ProductCard } from '@/components/product-card';
 import { useLocalStorage } from '@/hooks/use-localstorage';
+import { Card } from '@/components/ui/card';
 
 type SortOption =
   | 'name-asc'
@@ -137,7 +138,7 @@ export function ProductsPage() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row">
+      <Card className="flex flex-col gap-4 md:flex-row p-2">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -195,7 +196,7 @@ export function ProductsPage() {
             )}
           </Button>
         </div>
-      </div>
+      </Card>
 
       {viewMode === 'grid' ? (
         <div className="product-grid">

@@ -1,10 +1,4 @@
-import {
-  X, // Close
-  Minus, // Minimize
-  Maximize, // Maximize
-  Minimize, // Restore (optional)
-  Laptop, // App icon (as example)
-} from 'lucide-react';
+import { X, Minus, Laptop, Square, SquaresUnite } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 
@@ -13,37 +7,29 @@ export function ElectronTopBar() {
   const [isMaximized, setIsMaximized] = useState(false);
 
   useEffect(() => {
-    // window is maximized
-    ipc.on('isMaximized', () => {
-      setIsMaximized(true);
-    });
-    // is restored
-    ipc.on('isRestored', () => {
-      setIsMaximized(false);
+    ipc.on('window-state-changed', (data: any) => {
+      setIsMaximized(!!data.isMaximized);
     });
   }, []);
 
-  async function handleMaximize() {
-    const maximised = ipc.sendSync('app:maximize');
-    setIsMaximized(maximised);
+  function handleMaximize() {
+    ipc.sendSync('app:maximize');
   }
 
-  async function handleRestore() {
-    const maximised = ipc.sendSync('app:maximize');
-    setIsMaximized(maximised);
+  function handleRestore() {
+    ipc.sendSync('app:maximize');
   }
 
-  async function handleMinimize() {
-    ipc.send('app:minimize');
+  function handleMinimize() {
+    ipc.sendSync('app:minimize');
   }
 
-  async function handleClose() {
-    console.log('close');
-    ipc.send('app:close');
+  function handleClose() {
+    ipc.sendSync('app:close');
   }
 
   return (
-    <div className="electron-top-bar flex items-center justify-between bg-accent text-accent-foreground h-electron-topbar select-none user-select-none border-b border-border">
+    <div className="electron-title-bar flex items-center justify-between bg-background text-foreground h-electron-topbar select-none user-select-none border-b border-border">
       {/* Left side: Icon + Theme dropdown */}
       <div className="flex items-center gap-2 px-2">
         <Laptop className="w-5 h-5" />
@@ -57,7 +43,7 @@ export function ElectronTopBar() {
           size="sm"
           onClick={handleMinimize}
           aria-label="Minimize window"
-          className="hover:bg-muted"
+          className="hover:bg-muted-foreground/10 hover:text-foreground"
         >
           <Minus className="w-4 h-4" />
         </Button>
@@ -68,9 +54,9 @@ export function ElectronTopBar() {
             size="sm"
             onClick={handleRestore}
             aria-label="Restore window"
-            className="hover:bg-muted"
+            className="hover:bg-muted-foreground/10 hover:text-foreground"
           >
-            <Minimize className="w-4 h-4" />
+            <SquaresUnite className="w-4 h-4 transform scale-y-[-1]" />
           </Button>
         ) : (
           <Button
@@ -78,9 +64,9 @@ export function ElectronTopBar() {
             size="sm"
             onClick={handleMaximize}
             aria-label="Maximize window"
-            className="hover:bg-muted"
+            className="hover:bg-muted-foreground/10 hover:text-foreground"
           >
-            <Maximize className="w-4 h-4" />
+            <Square className="w-4 h-4" />
           </Button>
         )}
 
