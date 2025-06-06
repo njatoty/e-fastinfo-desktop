@@ -101,12 +101,12 @@ export function Sidebar({ open, onOpenChange }: SidebarProps) {
             open ? 'justify-between' : 'justify-center'
           )}
         >
-          <div className="flex items-center gap-2">
-            <Laptop className="h-6 w-6 text-primary" />
-            {open && (
+          {open && (
+            <div className="flex items-center gap-2">
+              <Laptop className="h-6 w-6 text-primary" />
               <span className="text-lg font-semibold">ElectroAdmin</span>
-            )}
-          </div>
+            </div>
+          )}
 
           <Button
             variant="ghost"

@@ -43,10 +43,11 @@ export function ElectronTopBar() {
   }
 
   return (
-    <div className="electron-top-bar flex items-center justify-between bg-card px-4 h-electron-topbar select-none user-select-none border-b border-border">
+    <div className="electron-top-bar flex items-center justify-between bg-accent text-accent-foreground h-electron-topbar select-none user-select-none border-b border-border">
       {/* Left side: Icon + Theme dropdown */}
-      <div className="flex items-center gap-2">
-        <Laptop className="w-5 h-5 text-primary" />
+      <div className="flex items-center gap-2 px-2">
+        <Laptop className="w-5 h-5" />
+        <span className="text-sm">Store management</span>
       </div>
 
       {/* Right side: Window control buttons */}

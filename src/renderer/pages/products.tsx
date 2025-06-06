@@ -11,7 +11,6 @@ import {
   Eye,
   LayoutGrid,
   LayoutList,
-  Package,
 } from 'lucide-react';
 import { useProducts } from '@/context/product-context';
 import { Category } from '@/types';
@@ -32,12 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
 import { toast } from 'sonner';
 import { ProductCard } from '@/components/product-card';
 
