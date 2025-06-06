@@ -20,7 +20,9 @@ import { toast } from 'sonner';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  password: z
+    .string()
+    .min(6, { message: 'Password must be at least 6 characters' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -65,7 +67,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-muted/40">
+    <div className="flex min-h-electron-content flex-col bg-muted/40">
       <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex justify-center">
@@ -82,7 +84,10 @@ export function LoginPage() {
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-card px-6 py-8 shadow sm:rounded-lg sm:px-10">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <FormField
                   control={form.control}
                   name="email"
@@ -90,10 +95,7 @@ export function LoginPage() {
                     <FormItem>
                       <FormLabel>Email address</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="admin@electronics.com"
-                          {...field}
-                        />
+                        <Input placeholder="admin@electronics.com" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -120,10 +122,11 @@ export function LoginPage() {
                             className="absolute right-0 top-0 h-full px-3"
                             onClick={() => setShowPassword(!showPassword)}
                           >
-                            {showPassword ?
-                              <EyeOff className="h-4 w-4 text-muted-foreground" /> :
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4 text-muted-foreground" />
+                            ) : (
                               <Eye className="h-4 w-4 text-muted-foreground" />
-                            }
+                            )}
                           </Button>
                         </div>
                       </FormControl>

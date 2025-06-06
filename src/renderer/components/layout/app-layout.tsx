@@ -8,12 +8,12 @@ export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-electron-content flex flex-col bg-background contain-content">
       <Sidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
 
       <div
         className={cn(
-          'flex flex-col min-h-screen transition-all duration-300 ease-in-out',
+          'flex flex-col flex-grow overflow-y-auto transition-all duration-300 ease-in-out',
           sidebarOpen ? 'lg:pl-64' : 'lg:pl-16'
         )}
       >
@@ -22,7 +22,7 @@ export function AppLayout() {
           onSidebarOpenChange={setSidebarOpen}
         />
 
-        <main className="flex-1 p-4 md:p-6 bg-gray-100">
+        <main className="flex-grow p-4 md:p-6 bg-muted overflow-y-auto">
           <Outlet />
         </main>
       </div>

@@ -80,7 +80,11 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true
     },
+    disableAutoHideCursor: true,
+    frame: false,
+    titleBarStyle: 'hidden'
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
@@ -239,4 +243,25 @@ ipcMain.on('config:get-prisma-me-path', (event) => {
 
 ipcMain.on('config:get-prisma-qe-path', (event) => {
   event.returnValue = qePath;
+});
+
+
+// custom menu bars
+ipcMain.on('app:close', (event) => {
+  event.preventDefault();
+  mainWindow?.close();
+});
+ipcMain.on('app:maximize', (event) => {
+  event.preventDefault();
+  if (mainWindow?.isMaximized()) {
+    mainWindow.restore();
+    event.returnValue = false;
+  } else {
+    mainWindow?.maximize();
+    event.returnValue = true;
+  }
+});
+ipcMain.on('app:minimize', (event) => {
+  event.preventDefault();
+  mainWindow?.minimize();
 });

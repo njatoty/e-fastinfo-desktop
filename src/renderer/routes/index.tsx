@@ -12,6 +12,7 @@ import { LowStockPage } from '@/pages/low-stock';
 import { StockMovementsPage } from '@/pages/stock-movements';
 import { StaffPage } from '@/pages/staff';
 import { SettingsPage } from '@/pages/settings';
+import ElectronLayout from '@/components/layout/electron-layout';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -36,37 +37,41 @@ export const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route
-        path="/login"
-        element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
-      />
+      <Route element={<ElectronLayout />}>
+        <Route
+          path="/login"
+          element={
+            isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />
+          }
+        />
 
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
-        {/* Dashboard */}
-        <Route index element={<DashboardPage />} />
-        {/* Products */}
-        <Route path="products">
-          <Route index element={<ProductsPage />} />
-          <Route path="add" element={<AddProductPage />} />
-          <Route path=":id" element={<ProductDetailPage />} />
-          <Route path=":id/edit" element={<EditProductPage />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <AppLayout />
+            </ProtectedRoute>
+          }
+        >
+          {/* Dashboard */}
+          <Route index element={<DashboardPage />} />
+          {/* Products */}
+          <Route path="products">
+            <Route index element={<ProductsPage />} />
+            <Route path="add" element={<AddProductPage />} />
+            <Route path=":id" element={<ProductDetailPage />} />
+            <Route path=":id/edit" element={<EditProductPage />} />
+          </Route>
+          {/* Categories */}
+          <Route path="categories" element={<CategoriesPage />} />
+          <Route path="low-stock" element={<LowStockPage />} />
+          <Route path="stock-movements" element={<StockMovementsPage />} />
+          <Route path="staff" element={<StaffPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
-        {/* Categories */}
-        <Route path="categories" element={<CategoriesPage />} />
-        <Route path="low-stock" element={<LowStockPage />} />
-        <Route path="stock-movements" element={<StockMovementsPage />} />
-        <Route path="staff" element={<StaffPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-      </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
     </Routes>
   );
 };

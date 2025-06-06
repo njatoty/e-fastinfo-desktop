@@ -39,8 +39,15 @@ import {
   CardHeader,
 } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { ProductCard } from '@/components/product-card';
 
-type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'stock-asc' | 'stock-desc';
+type SortOption =
+  | 'name-asc'
+  | 'name-desc'
+  | 'price-asc'
+  | 'price-desc'
+  | 'stock-asc'
+  | 'stock-desc';
 type ViewMode = 'grid' | 'table';
 
 export function ProductsPage() {
@@ -53,11 +60,13 @@ export function ProductsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
   // Filter products based on search and category
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCategory = selectedCategory === 'all' || product.categoryId === selectedCategory;
+    const matchesCategory =
+      selectedCategory === 'all' || product.categoryId === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
@@ -105,11 +114,15 @@ export function ProductsPage() {
   };
 
   const getCategoryById = (id: string): Category | undefined => {
-    return categories.find(category => category.id === id);
+    return categories.find((category) => category.id === id);
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-[calc(100vh-4rem)]">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+        Loading...
+      </div>
+    );
   }
 
   return (
@@ -117,9 +130,7 @@ export function ProductsPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Products</h2>
-          <p className="text-muted-foreground">
-            Manage your product inventory
-          </p>
+          <p className="text-muted-foreground">Manage your product inventory</p>
         </div>
         <Button onClick={() => navigate('/products/add')}>
           <Plus className="w-4 h-4 mr-2" /> Add Product
@@ -139,10 +150,7 @@ export function ProductsPage() {
         </div>
 
         <div className="flex gap-2">
-          <Select
-            value={selectedCategory}
-            onValueChange={setSelectedCategory}
-          >
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-[180px]">
               <Filter className="w-4 h-4 mr-2" />
               <SelectValue placeholder="Category" />
@@ -190,84 +198,18 @@ export function ProductsPage() {
       </div>
 
       {viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+        <div className="product-grid">
           {sortedProducts.map((product) => {
             const category = getCategoryById(product.categoryId);
             return (
-              <Card
+              <ProductCard
                 key={product.id}
-                className="overflow-hidden transition-shadow cursor-pointer hover:shadow-lg"
-                onClick={() => navigate(`/products/${product.id}`)}
-              >
-                <div className="relative aspect-square">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="object-cover w-full h-full"
-                  />
-                  <div className="absolute top-2 right-2">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                        <Button variant="secondary" size="icon">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={(e) => handleView(product.id, e)}>
-                          <Eye className="w-4 h-4 mr-2" />
-                          View
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => handleEdit(product.id, e)}>
-                          <Pencil className="w-4 h-4 mr-2" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={(e) => handleDelete(product.id, e)}
-                        >
-                          <Trash className="w-4 h-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-
-                <CardHeader className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: category?.color || 'gray' }}
-                    />
-                    <span className="text-sm text-muted-foreground">
-                      {category?.name || 'Unknown'}
-                    </span>
-                  </div>
-                  <h3 className="font-semibold truncate">{product.name}</h3>
-                </CardHeader>
-
-                <CardContent className="p-4 pt-0">
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {product.description}
-                  </p>
-                </CardContent>
-
-                <CardFooter className="flex items-center justify-between p-4 border-t">
-                  <div className="flex items-center gap-2">
-                    <Package className="w-4 h-4 text-muted-foreground" />
-                    <span className={`text-sm font-medium ${product.stockQuantity < 5
-                      ? 'text-rose-500'
-                      : product.stockQuantity < 10
-                        ? 'text-amber-500'
-                        : ''
-                      }`}>
-                      {product.stockQuantity}
-                    </span>
-                  </div>
-                  <span className="font-semibold">${product.price.toFixed(2)}</span>
-                </CardFooter>
-              </Card>
+                product={product}
+                category={category}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             );
           })}
         </div>
@@ -298,7 +240,9 @@ export function ProductsPage() {
                           <div className="flex items-center gap-3">
                             <div
                               className="w-10 h-10 bg-center bg-no-repeat bg-cover rounded"
-                              style={{ backgroundImage: `url(${product.imageUrl})` }}
+                              style={{
+                                backgroundImage: `url(${product.imageUrl})`,
+                              }}
                             />
                             <span className="font-medium">{product.name}</span>
                           </div>
@@ -307,20 +251,24 @@ export function ProductsPage() {
                           <div className="flex items-center gap-2">
                             <div
                               className="w-2 h-2 rounded-full"
-                              style={{ backgroundColor: category?.color || 'gray' }}
+                              style={{
+                                backgroundColor: category?.color || 'gray',
+                              }}
                             />
                             <span>{category?.name || 'Unknown'}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3">${product.price.toFixed(2)}</td>
+                        <td className="px-4 py-3">
+                          ${product.price.toFixed(2)}
+                        </td>
                         <td className="px-4 py-3">
                           <span
                             className={
                               product.stockQuantity < 5
                                 ? 'text-rose-500'
                                 : product.stockQuantity < 10
-                                  ? 'text-amber-500'
-                                  : ''
+                                ? 'text-amber-500'
+                                : ''
                             }
                           >
                             {product.stockQuantity}
@@ -339,11 +287,15 @@ export function ProductsPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={(e) => handleView(product.id, e)}>
+                              <DropdownMenuItem
+                                onClick={(e) => handleView(product.id, e)}
+                              >
                                 <Eye className="w-4 h-4 mr-2" />
                                 View
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={(e) => handleEdit(product.id, e)}>
+                              <DropdownMenuItem
+                                onClick={(e) => handleEdit(product.id, e)}
+                              >
                                 <Pencil className="w-4 h-4 mr-2" />
                                 Edit
                               </DropdownMenuItem>
@@ -363,7 +315,10 @@ export function ProductsPage() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-6 text-center text-muted-foreground">
+                    <td
+                      colSpan={5}
+                      className="py-6 text-center text-muted-foreground"
+                    >
                       No products found
                     </td>
                   </tr>

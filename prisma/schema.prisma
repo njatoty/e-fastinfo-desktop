@@ -13,61 +13,61 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-enum StaffRole {
-  ADMIN
-  MANAGER
-  CASHIER
-}
+// enum StaffRole {
+//   ADMIN
+//   MANAGER
+//   CASHIER
+// }
 
-enum OrderStatus {
-  PENDING // En attente de traitement
-  PROCESSING // En cours de préparation
-  SHIPPED // Expédiée
-  DELIVERED // Livrée
-  CANCELLED // Annulée
-}
+// enum OrderStatus {
+//   PENDING // En attente de traitement
+//   PROCESSING // En cours de préparation
+//   SHIPPED // Expédiée
+//   DELIVERED // Livrée
+//   CANCELLED // Annulée
+// }
 
-// Statut global de paiement pour la Commande
-enum PaymentOverallStatus {
-  UNPAID // Non payée
-  PAID // Entièrement payée
-  PARTIALLY_PAID // Partiellement payée
-  REFUNDED // Entièrement remboursée
-  PARTIALLY_REFUNDED // Partiellement remboursée
-  FAILED // Échec du paiement
-}
+// // Statut global de paiement pour la Commande
+// enum PaymentOverallStatus {
+//   UNPAID // Non payée
+//   PAID // Entièrement payée
+//   PARTIALLY_PAID // Partiellement payée
+//   REFUNDED // Entièrement remboursée
+//   PARTIALLY_REFUNDED // Partiellement remboursée
+//   FAILED // Échec du paiement
+// }
 
-// Statut pour une transaction de paiement individuelle
-enum PaymentTransactionStatus {
-  PENDING
-  SUCCESSFUL
-  FAILED
-  REFUNDED
-}
+// // Statut pour une transaction de paiement individuelle
+// enum PaymentTransactionStatus {
+//   PENDING
+//   SUCCESSFUL
+//   FAILED
+//   REFUNDED
+// }
 
-enum DiscountValueType {
-  PERCENTAGE // La réduction est un pourcentage
-  FIXED_AMOUNT // La réduction est un montant fixe
-}
+// enum DiscountValueType {
+//   PERCENTAGE // La réduction est un pourcentage
+//   FIXED_AMOUNT // La réduction est un montant fixe
+// }
 
-enum DiscountScope {
-  PRODUCT // S'applique à des produits spécifiques
-  CATEGORY // S'applique à tous les produits d'une ou plusieurs catégories spécifiques
-  ORDER // S'applique au total de la commande (ex: code promo)
-}
+// enum DiscountScope {
+//   PRODUCT // S'applique à des produits spécifiques
+//   CATEGORY // S'applique à tous les produits d'une ou plusieurs catégories spécifiques
+//   ORDER // S'applique au total de la commande (ex: code promo)
+// }
 
 // Modèles de données
 
 model Staff {
-  id        String    @id @default(uuid())
-  email     String    @unique
+  id        String  @id @default(uuid())
+  email     String  @unique
   name      String
   phone     String?
   address   String?
   avatarUrl String?
-  isActive  Boolean   @default(true)
+  isActive  Boolean @default(true)
   password  String // Assurez-vous que ce mot de passe est toujours stocké de manière hachée et sécurisée
-  role      StaffRole // Pas de rôle par défaut, attribution explicite recommandée
+  role      String // Pas de rôle par défaut, attribution explicite recommandée
 
   // Relations: Quels éléments sont gérés/traités par ce membre du personnel
   managedProducts   Product[]  @relation("StaffManagedProducts")
@@ -148,7 +148,7 @@ model Order {
   customerId     String
   customer       Customer @relation(fields: [customerId], references: [id])
 
-  status          OrderStatus @default(PENDING)
+  status          String  @default("PENDING")
   shippingAddress String?
 
   subtotal            Decimal // Somme de OrderItem.lineItemTotal (avant réductions de commande globales et frais)
@@ -158,7 +158,7 @@ model Order {
 
   items OrderItem[] // Détail des articles commandés
 
-  paymentOverallStatus PaymentOverallStatus @default(UNPAID) // Statut global du paiement de la commande
+  paymentOverallStatus String    @default("UNPAID") // Statut global du paiement de la commande
   payments             Payment[] // Historique des transactions de paiement pour cette commande
 
   // Qui a traité/gère cette commande (optionnel)
@@ -227,8 +227,8 @@ model Payment {
   paymentMethodId String
   paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
 
-  transactionId String?                  @unique // ID de transaction de la passerelle
-  status        PaymentTransactionStatus @default(PENDING)
+  transactionId String?   @unique // ID de transaction de la passerelle
+  status        String    @default("PENDING")
   processedAt   DateTime? // Date et heure du traitement effectif
   notes         String? // Notes administratives sur ce paiement
 
@@ -245,10 +245,10 @@ model Discount {
   description String?
   code        String? @unique // Pour les coupons (ex: "SUMMER20")
 
-  valueType DiscountValueType
+  valueType String
   value     Decimal // Valeur (ex: 15.00 pour 15% ou 10.00 pour 10€)
 
-  scope DiscountScope
+  scope String
 
   isActive  Boolean   @default(true)
   validFrom DateTime?
