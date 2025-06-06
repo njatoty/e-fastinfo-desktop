@@ -9,7 +9,10 @@ import './styles/main.css';
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="electronics-inventory-theme">
+    <ThemeProvider
+      defaultTheme="light"
+      storageKey="electronics-inventory-theme"
+    >
       <AuthProvider>
         <ProductProvider>
           <Router>

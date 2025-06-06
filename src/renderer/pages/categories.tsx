@@ -37,13 +37,17 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { Card } from '@/components/ui/card';
 
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Category name must be at least 2 characters.',
-  }).max(50, {
-    message: 'Category name must not exceed 50 characters.',
-  }),
+  name: z
+    .string()
+    .min(2, {
+      message: 'Category name must be at least 2 characters.',
+    })
+    .max(50, {
+      message: 'Category name must not exceed 50 characters.',
+    }),
   description: z.string().max(200, {
     message: 'Description must not exceed 200 characters.',
   }),
@@ -55,14 +59,15 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function CategoriesPage() {
-  const { categories, products, addCategory, updateCategory, deleteCategory } = useProducts();
-  
+  const { categories, products, addCategory, updateCategory, deleteCategory } =
+    useProducts();
+
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -71,7 +76,7 @@ export function CategoriesPage() {
       color: '#3B82F6',
     },
   });
-  
+
   const editForm = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,10 +85,10 @@ export function CategoriesPage() {
       color: '#3B82F6',
     },
   });
-  
+
   const handleAddSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    
+
     try {
       addCategory(data);
       toast.success('Category added successfully');
@@ -95,12 +100,12 @@ export function CategoriesPage() {
       setIsSubmitting(false);
     }
   };
-  
+
   const handleEditSubmit = async (data: FormValues) => {
     if (!selectedCategory) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       updateCategory(selectedCategory, data);
       toast.success('Category updated successfully');
@@ -111,10 +116,10 @@ export function CategoriesPage() {
       setIsSubmitting(false);
     }
   };
-  
+
   const handleDelete = async () => {
     if (!selectedCategory) return;
-    
+
     try {
       deleteCategory(selectedCategory);
       toast.success('Category deleted successfully');
@@ -127,9 +132,9 @@ export function CategoriesPage() {
       }
     }
   };
-  
+
   const openEditDialog = (categoryId: string) => {
-    const category = categories.find(c => c.id === categoryId);
+    const category = categories.find((c) => c.id === categoryId);
     if (category) {
       setSelectedCategory(categoryId);
       editForm.reset({
@@ -140,26 +145,25 @@ export function CategoriesPage() {
       setIsEditDialogOpen(true);
     }
   };
-  
+
   const openDeleteDialog = (categoryId: string) => {
     setSelectedCategory(categoryId);
     setIsDeleteDialogOpen(true);
   };
-  
+
   const countProductsInCategory = (categoryId: string) => {
-    return products.filter(product => product.categoryId === categoryId).length;
+    return products.filter((product) => product.categoryId === categoryId)
+      .length;
   };
-  
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Categories</h2>
-          <p className="text-muted-foreground">
-            Manage product categories
-          </p>
+          <p className="text-muted-foreground">Manage product categories</p>
         </div>
-        
+
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -173,9 +177,12 @@ export function CategoriesPage() {
                 Create a new category for organizing products.
               </DialogDescription>
             </DialogHeader>
-            
+
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleAddSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(handleAddSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="name"
@@ -189,7 +196,7 @@ export function CategoriesPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="description"
@@ -207,7 +214,7 @@ export function CategoriesPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="color"
@@ -227,7 +234,7 @@ export function CategoriesPage() {
                     </FormItem>
                   )}
                 />
-                
+
                 <DialogFooter>
                   <Button type="submit" disabled={isSubmitting}>
                     {isSubmitting ? 'Adding...' : 'Add Category'}
@@ -238,8 +245,8 @@ export function CategoriesPage() {
           </DialogContent>
         </Dialog>
       </div>
-      
-      <div className="rounded-md border">
+
+      <Card>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -256,8 +263,8 @@ export function CategoriesPage() {
                   <tr key={category.id} className="border-b last:border-b-0">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        <div 
-                          className="h-4 w-4 rounded-full" 
+                        <div
+                          className="h-4 w-4 rounded-full"
                           style={{ backgroundColor: category.color }}
                         />
                         <span className="font-medium">{category.name}</span>
@@ -279,7 +286,7 @@ export function CategoriesPage() {
                           <Pencil className="h-4 w-4" />
                           <span className="sr-only">Edit</span>
                         </Button>
-                        
+
                         <Button
                           variant="outline"
                           size="icon"
@@ -295,7 +302,10 @@ export function CategoriesPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="py-6 text-center text-muted-foreground">
+                  <td
+                    colSpan={4}
+                    className="py-6 text-center text-muted-foreground"
+                  >
                     No categories found
                   </td>
                 </tr>
@@ -303,20 +313,21 @@ export function CategoriesPage() {
             </tbody>
           </table>
         </div>
-      </div>
-      
+      </Card>
+
       {/* Edit Category Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>
-              Update category information.
-            </DialogDescription>
+            <DialogDescription>Update category information.</DialogDescription>
           </DialogHeader>
-          
+
           <Form {...editForm}>
-            <form onSubmit={editForm.handleSubmit(handleEditSubmit)} className="space-y-4">
+            <form
+              onSubmit={editForm.handleSubmit(handleEditSubmit)}
+              className="space-y-4"
+            >
               <FormField
                 control={editForm.control}
                 name="name"
@@ -330,7 +341,7 @@ export function CategoriesPage() {
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={editForm.control}
                 name="description"
@@ -338,16 +349,13 @@ export function CategoriesPage() {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={3}
-                        {...field}
-                      />
+                      <Textarea rows={3} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              
+
               <FormField
                 control={editForm.control}
                 name="color"
@@ -367,7 +375,7 @@ export function CategoriesPage() {
                   </FormItem>
                 )}
               />
-              
+
               <DialogFooter>
                 <Button type="submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Saving...' : 'Save Changes'}
@@ -377,17 +385,22 @@ export function CategoriesPage() {
           </Form>
         </DialogContent>
       </Dialog>
-      
+
       {/* Delete Category Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              {selectedCategory && countProductsInCategory(selectedCategory) > 0 ? (
+              {selectedCategory &&
+              countProductsInCategory(selectedCategory) > 0 ? (
                 <div className="text-destructive">
-                  This category cannot be deleted because it has products associated with it.
-                  Please move or delete the products in this category first.
+                  This category cannot be deleted because it has products
+                  associated with it. Please move or delete the products in this
+                  category first.
                 </div>
               ) : (
                 'This action cannot be undone. This will permanently delete the category.'
@@ -398,21 +411,26 @@ export function CategoriesPage() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              disabled={selectedCategory ? countProductsInCategory(selectedCategory) > 0 : false}
+              disabled={
+                selectedCategory
+                  ? countProductsInCategory(selectedCategory) > 0
+                  : false
+              }
             >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
+
       {/* Empty State */}
       {categories.length === 0 && (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <Tag className="mx-auto h-10 w-10 text-muted-foreground" />
           <h3 className="mt-4 text-lg font-semibold">No categories</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            You haven't created any categories yet. Categories help you organize your products.
+            You haven't created any categories yet. Categories help you organize
+            your products.
           </p>
           <Button className="mt-4" onClick={() => setIsAddDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" /> Add Category

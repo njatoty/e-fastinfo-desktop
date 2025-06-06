@@ -74,8 +74,19 @@ export default {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
+      height: {
+        'electron-topbar': 'var(--electron-topbar-height)',
+        'electron-content': 'var(--electron-content-height)',
+      },
+      minHeight: {
+        'electron-topbar': 'var(--electron-topbar-height)',
+        'electron-content': 'var(--electron-content-height)',
+      },
+      maxHeight: {
+        'electron-topbar': 'var(--electron-topbar-height)',
+        'electron-content': 'var(--electron-content-height)',
+      },
     },
   },
   plugins: [],
 } satisfies Config
-

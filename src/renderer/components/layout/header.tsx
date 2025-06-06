@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -20,9 +20,9 @@ interface HeaderProps {
 
 export function Header({ sidebarOpen, onSidebarOpenChange }: HeaderProps) {
   const { user, logout } = useAuth();
-  
+
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 flex-shrink-0">
       <Button
         variant="ghost"
         size="icon"
@@ -32,7 +32,7 @@ export function Header({ sidebarOpen, onSidebarOpenChange }: HeaderProps) {
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle menu</span>
       </Button>
-      
+
       <div className="w-full flex items-center gap-4 md:gap-8">
         <form className="hidden md:flex-1 md:flex max-w-md">
           <div className="relative w-full">
@@ -44,15 +44,15 @@ export function Header({ sidebarOpen, onSidebarOpenChange }: HeaderProps) {
             />
           </div>
         </form>
-        
+
         <div className="ml-auto flex items-center gap-4">
           <ThemeToggle />
-          
+
           <Button variant="ghost" size="icon" className="text-muted-foreground">
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
           </Button>
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -68,12 +68,12 @@ export function Header({ sidebarOpen, onSidebarOpenChange }: HeaderProps) {
                 <span>{user?.name}</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link to="/settings" className="w-full">Settings</Link>
+                <Link to="/settings" className="w-full">
+                  Settings
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={logout}>
-                Log out
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>Log out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
