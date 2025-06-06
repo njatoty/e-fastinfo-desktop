@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { ProductCard } from '@/components/product-card';
+import { useLocalStorage } from '@/hooks/use-localstorage';
 
 type SortOption =
   | 'name-asc'
@@ -49,8 +50,14 @@ export function ProductsPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [sortOption, setSortOption] = useState<SortOption>('name-asc');
-  const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [sortOption, setSortOption] = useLocalStorage<SortOption>(
+    'products_table_sort',
+    'name-asc'
+  );
+  const [viewMode, setViewMode] = useLocalStorage<ViewMode>(
+    'products_table_view',
+    'grid'
+  );
 
   // Filter products based on search and category
   const filteredProducts = products.filter((product) => {

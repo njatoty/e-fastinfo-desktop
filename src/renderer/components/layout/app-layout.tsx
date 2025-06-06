@@ -1,11 +1,12 @@
-import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './sidebar';
 import { Header } from './header';
 import { cn } from '@/lib/utils';
+import { useLocalStorage } from '@/hooks/use-localstorage';
 
 export function AppLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // use localstorage
+  const [sidebarOpen, setSidebarOpen] = useLocalStorage('sidebar_open', true);
 
   return (
     <div className="h-electron-content flex flex-col bg-background contain-content">
