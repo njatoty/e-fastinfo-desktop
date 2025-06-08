@@ -49,6 +49,8 @@ const api = {
         ipcRenderer.once(channel, (event, ...args) => func(...args));
       }
     },
+    downloadImage: (url, outputPath) =>
+      ipcRenderer.invoke('download-image', url, outputPath),
   },
 };
 

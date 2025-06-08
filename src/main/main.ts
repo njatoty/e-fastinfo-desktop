@@ -18,6 +18,7 @@ import isDev from 'electron-is-dev';
 import fs from 'fs';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import axios from 'axios';
 
 export default class AppUpdater {
   constructor() {
@@ -191,6 +192,15 @@ if (!isDev) {
   }
 }
 
+// Uploaded images path
+const imagesFolder = isDev
+  ? path.join(__dirname, '../../public/images')
+  : path.join(app.getPath('userData'), 'images');
+
+if (!fs.existsSync(imagesFolder)) {
+  fs.mkdirSync(imagesFolder, { recursive: true });
+}
+
 const platformToExecutables: Record<string, any> = {
   win32: {
     migrationEngine:
@@ -282,3 +292,44 @@ ipcMain.on('app:minimize', (event) => {
   mainWindow?.minimize();
   event.returnValue = true;
 });
+
+ipcMain.handle('download-image', async (event, url: string) => {
+  try {
+
+    // Case 1: URL is a local file path
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      const srcPath = url; // local path
+      const srcFilename = path.basename(srcPath); // extract just the filename
+      const destPath = path.join(imagesFolder, srcFilename); // safe destination
+
+      await fs.promises.copyFile(srcPath, destPath);
+      event.returnValue = true;
+      return;
+    }
+
+    const filename = url.split('/').pop()?.split('?')[0] || 'image.png';
+    const savePath = path.join(imagesFolder, filename);
+    // Case 2: URL is online, download with axios
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'stream',
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+      },
+    });
+
+    const writer = fs.createWriteStream(savePath);
+    response.data.pipe(writer);
+
+    event.returnValue = new Promise((resolve) => {
+      writer.on('finish', () => resolve(true));
+      writer.on('error', () => resolve(false));
+    });
+  } catch (error) {
+    console.error('Error in download-image:', error);
+    event.returnValue = false;
+  }
+});
+

@@ -3,6 +3,7 @@ import { Sidebar } from './sidebar';
 import { Header } from './header';
 import { cn } from '@/lib/utils';
 import { useLocalStorage } from '@/hooks/use-localstorage';
+import { ScrollArea } from '../ui/scroll-area';
 
 export function AppLayout() {
   // use localstorage
@@ -14,7 +15,7 @@ export function AppLayout() {
 
       <div
         className={cn(
-          'flex flex-col flex-grow overflow-y-auto transition-all duration-300 ease-in-out',
+          'flex flex-col flex-grow min-h-0 transition-all duration-300 ease-in-out',
           sidebarOpen ? 'lg:pl-64' : 'lg:pl-16'
         )}
       >
@@ -23,9 +24,11 @@ export function AppLayout() {
           onSidebarOpenChange={setSidebarOpen}
         />
 
-        <main className="flex-grow p-4 md:p-6 bg-muted overflow-y-auto">
-          <Outlet />
-        </main>
+        <ScrollArea className="flex-grow">
+          <main className="p-4 md:p-6 bg-muted/50">
+            <Outlet />
+          </main>
+        </ScrollArea>
       </div>
     </div>
   );

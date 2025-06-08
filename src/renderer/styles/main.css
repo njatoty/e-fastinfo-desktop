@@ -62,24 +62,36 @@
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
+    /* Primary Colors */
+    --primary: 217 91% 55%; /* darker blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
+    /* Secondary Colors */
+    --secondary: 42 95% 50%; /* slightly muted amber */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
+    /* Accent Colors */
+    --accent: 160 84% 35%; /* muted emerald */
+    --accent-foreground: 0 0% 100%;
 
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    /* Info Colors */
+    --info: 198 93% 42%; /* muted sky */
+    --info-foreground: 0 0% 100%;
+
+    /* Warning Colors */
+    --warning: 24 94% 45%; /* darker orange */
+    --warning-foreground: 0 0% 100%;
+
+    /* Muted Colors */
+    --muted: 0 0% 15%; /* very dark muted background */
+    --muted-foreground: 0 0% 55%; /* medium-light muted text */
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 0 0% 4.5%;
+    --ring: 0 0% 63.9%;
 
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -101,7 +113,7 @@
     -webkit-app-region: drag;
   }
   .electron-title-bar button {
-    @apply outline-none select-none;
+    @apply !outline-none select-none;
   }
   .electron-control-buttons {
     -webkit-app-region: no-drag;
