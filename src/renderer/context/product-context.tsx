@@ -6,7 +6,10 @@ import {
   ProductWithIncludes,
 } from '@/components/services/product.service';
 import type { Prisma, Product, Category } from '@prisma/client';
-import { categoryService } from '@/components/services/category.service';
+import {
+  categoryService,
+  CategoryWithIncludes,
+} from '@/components/services/category.service';
 import { toNumber } from '@/lib/utils';
 
 interface ProductContextType {
@@ -54,7 +57,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const { user } = useAuth();
   const [products, setProducts] = useState<ProductWithIncludes[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryWithIncludes[]>([]);
   const [stockMovements, setStockMovements] = useState<StockMovement[]>([]);
   const [loading, setLoading] = useState(true);
 
