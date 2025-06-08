@@ -6,7 +6,7 @@ import { StarFilledIcon } from '@radix-ui/react-icons';
 import { cn } from '@/lib/utils';
 
 const GOOGLE_API_KEY = 'AIzaSyCCQSbCee3fhdM4fxI5q6tjOaEn4jCMZ8I';
-const CX = '17a18b45094da4f02'; // Custom Search Engine ID
+const CX = '17a18b45094da4f02';
 
 interface ImageSearchProps {
   query: string;

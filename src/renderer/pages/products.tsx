@@ -35,6 +35,7 @@ import { toast } from 'sonner';
 import { ProductCard } from '@/components/product-card';
 import { useLocalStorage } from '@/hooks/use-localstorage';
 import { Card } from '@/components/ui/card';
+import { IconValue } from '@/components/icon-picker';
 
 type SortOption =
   | 'name-asc'
@@ -80,9 +81,9 @@ export function ProductsPage() {
       case 'name-desc':
         return b.name.localeCompare(a.name);
       case 'price-asc':
-        return a.price - b.price;
+        return a.price.toNumber() - b.price.toNumber();
       case 'price-desc':
-        return b.price - a.price;
+        return b.price.toNumber() - a.price.toNumber();
       case 'stock-asc':
         return a.stockQuantity - b.stockQuantity;
       case 'stock-desc':
@@ -114,7 +115,7 @@ export function ProductsPage() {
     navigate(`/products/${id}`);
   };
 
-  const getCategoryById = (id: string): Category | undefined => {
+  const getCategoryById = (id: string) => {
     return categories.find((category) => category.id === id);
   };
 
@@ -205,7 +206,10 @@ export function ProductsPage() {
             return (
               <ProductCard
                 key={product.id}
-                product={product}
+                product={{
+                  ...product,
+                  price: product.price.toNumber(),
+                }}
                 category={category}
                 onView={handleView}
                 onEdit={handleEdit}
@@ -250,12 +254,7 @@ export function ProductsPage() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <div
-                              className="w-2 h-2 rounded-full"
-                              style={{
-                                backgroundColor: category?.color || 'gray',
-                              }}
-                            />
+                            <IconValue icon={category?.icon!} />
                             <span>{category?.name || 'Unknown'}</span>
                           </div>
                         </td>

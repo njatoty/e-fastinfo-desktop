@@ -78,7 +78,7 @@ const formSchema = z.object({
   ),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type AddCategoryFormValues = z.infer<typeof formSchema>;
 
 export function AddProductPage() {
   const { categories, addProduct } = useProducts();
@@ -86,7 +86,7 @@ export function AddProductPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [queryImage, setQueryImage] = useState('');
 
-  const form = useForm<FormValues>({
+  const form = useForm<AddCategoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -98,16 +98,19 @@ export function AddProductPage() {
     },
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: AddCategoryFormValues) => {
     setIsSubmitting(true);
 
     try {
-      const now = new Date().toISOString();
-
       addProduct({
-        ...data,
-        createdAt: now,
-        updatedAt: now,
+        price: data.price as number,
+        stockQuantity: data.stockQuantity as number,
+        category: {
+          connect: { id: data.categoryId },
+        },
+        name: data.name,
+        description: data.description,
+        imageUrl: data.imageUrl,
       });
 
       toast.success('Product added successfully');
