@@ -81,13 +81,12 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true
+      contextIsolation: true,
     },
     disableAutoHideCursor: true,
     // frame: false,
-    titleBarStyle: 'hidden'
+    titleBarStyle: 'hidden',
   });
-
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
   mainWindow.webContents.openDevTools();
@@ -109,18 +108,22 @@ const createWindow = async () => {
 
   mainWindow.on('maximize', () => {
     mainWindow?.webContents.send('window-state-changed', { isMaximized: true });
-    console.log('maximized')
+    console.log('maximized');
   });
 
   mainWindow.on('unmaximize', () => {
-    mainWindow?.webContents.send('window-state-changed', { isMaximized: false });
-    console.log('unmaximized')
+    mainWindow?.webContents.send('window-state-changed', {
+      isMaximized: false,
+    });
+    console.log('unmaximized');
   });
 
   mainWindow.on('restore', () => {
-    mainWindow?.webContents.send('window-state-changed', { isMaximized: false })
-    console.log('restored')
-  })
+    mainWindow?.webContents.send('window-state-changed', {
+      isMaximized: false,
+    });
+    console.log('restored');
+  });
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
@@ -271,7 +274,6 @@ ipcMain.on('config:get-prisma-qe-path', (event) => {
   event.returnValue = qePath;
 });
 
-
 // on close event
 ipcMain.on('app:close', (event) => {
   mainWindow?.close();
@@ -295,7 +297,6 @@ ipcMain.on('app:minimize', (event) => {
 
 ipcMain.handle('download-image', async (event, url: string) => {
   try {
-
     // Case 1: URL is a local file path
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       const srcPath = url; // local path
@@ -303,7 +304,7 @@ ipcMain.handle('download-image', async (event, url: string) => {
       const destPath = path.join(imagesFolder, srcFilename); // safe destination
 
       await fs.promises.copyFile(srcPath, destPath);
-      event.returnValue = true;
+      event.returnValue = destPath;
       return;
     }
 
@@ -324,12 +325,11 @@ ipcMain.handle('download-image', async (event, url: string) => {
     response.data.pipe(writer);
 
     event.returnValue = new Promise((resolve) => {
-      writer.on('finish', () => resolve(true));
-      writer.on('error', () => resolve(false));
+      writer.on('finish', () => resolve(savePath));
+      writer.on('error', () => resolve(null));
     });
   } catch (error) {
     console.error('Error in download-image:', error);
-    event.returnValue = false;
+    event.returnValue = null;
   }
 });
-

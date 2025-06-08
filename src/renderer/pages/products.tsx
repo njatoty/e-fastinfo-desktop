@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Search,
@@ -13,7 +13,6 @@ import {
   LayoutList,
 } from 'lucide-react';
 import { useProducts } from '@/context/product-context';
-import { Category } from '@/types';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +35,7 @@ import { ProductCard } from '@/components/product-card';
 import { useLocalStorage } from '@/hooks/use-localstorage';
 import { Card } from '@/components/ui/card';
 import { IconValue } from '@/components/icon-picker';
+import { toNumber } from '@/lib/utils';
 
 type SortOption =
   | 'name-asc'
@@ -62,62 +62,71 @@ export function ProductsPage() {
   );
 
   // Filter products based on search and category
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesCategory =
-      selectedCategory === 'all' || product.categoryId === selectedCategory;
+      const matchesCategory =
+        selectedCategory === 'all' || product.categoryId === selectedCategory;
 
-    return matchesSearch && matchesCategory;
-  });
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, searchQuery, selectedCategory]);
 
   // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortOption) {
-      case 'name-asc':
-        return a.name.localeCompare(b.name);
-      case 'name-desc':
-        return b.name.localeCompare(a.name);
-      case 'price-asc':
-        return a.price.toNumber() - b.price.toNumber();
-      case 'price-desc':
-        return b.price.toNumber() - a.price.toNumber();
-      case 'stock-asc':
-        return a.stockQuantity - b.stockQuantity;
-      case 'stock-desc':
-        return b.stockQuantity - a.stockQuantity;
-      default:
-        return 0;
-    }
-  });
+  const sortedProducts = useMemo(() => {
+    return [...filteredProducts].sort((a, b) => {
+      switch (sortOption) {
+        case 'name-asc':
+          return a.name.localeCompare(b.name);
+        case 'name-desc':
+          return b.name.localeCompare(a.name);
+        case 'price-asc':
+          return a.price.toNumber() - b.price.toNumber();
+        case 'price-desc':
+          return b.price.toNumber() - a.price.toNumber();
+        case 'stock-asc':
+          return a.stockQuantity - b.stockQuantity;
+        case 'stock-desc':
+          return b.stockQuantity - a.stockQuantity;
+        default:
+          return 0;
+      }
+    });
+  }, [filteredProducts, sortOption]);
 
-  const handleDelete = (id: string, event: React.MouseEvent) => {
-    event.stopPropagation();
+  const handleDelete = useCallback(
+    async (id: string, event: React.MouseEvent) => {
+      event.stopPropagation();
 
-    try {
-      deleteProduct(id);
-      toast.success('Product deleted successfully');
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to delete product');
-    }
-  };
+      try {
+        await deleteProduct(id); // ensure async/await
+        toast.success('Product deleted successfully');
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to delete product');
+      }
+    },
+    [deleteProduct]
+  );
 
-  const handleEdit = (id: string, event: React.MouseEvent) => {
-    event.stopPropagation();
-    navigate(`/products/${id}/edit`);
-  };
+  const handleEdit = useCallback(
+    (id: string, event: React.MouseEvent) => {
+      event.stopPropagation();
+      navigate(`/products/${id}/edit`);
+    },
+    [navigate]
+  );
 
-  const handleView = (id: string, event: React.MouseEvent) => {
-    event.stopPropagation();
-    navigate(`/products/${id}`);
-  };
-
-  const getCategoryById = (id: string) => {
-    return categories.find((category) => category.id === id);
-  };
+  const handleView = useCallback(
+    (id: string, event: React.MouseEvent) => {
+      event.stopPropagation();
+      navigate(`/products/${id}`);
+    },
+    [navigate]
+  );
 
   if (loading) {
     return (
@@ -202,15 +211,13 @@ export function ProductsPage() {
       {viewMode === 'grid' ? (
         <div className="product-grid">
           {sortedProducts.map((product) => {
-            const category = getCategoryById(product.categoryId);
             return (
               <ProductCard
                 key={product.id}
                 product={{
                   ...product,
-                  price: product.price.toNumber(),
+                  price: product.price,
                 }}
-                category={category}
                 onView={handleView}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
@@ -234,7 +241,6 @@ export function ProductsPage() {
               <tbody>
                 {sortedProducts.length > 0 ? (
                   sortedProducts.map((product) => {
-                    const category = getCategoryById(product.categoryId);
                     return (
                       <tr
                         key={product.id}
@@ -244,7 +250,7 @@ export function ProductsPage() {
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
                             <div
-                              className="w-10 h-10 bg-center bg-no-repeat bg-cover rounded"
+                              className="w-10 h-10 bg-center bg-no-repeat bg-contain rounded"
                               style={{
                                 backgroundImage: `url(${product.imageUrl})`,
                               }}
@@ -254,12 +260,12 @@ export function ProductsPage() {
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <IconValue icon={category?.icon!} />
-                            <span>{category?.name || 'Unknown'}</span>
+                            <IconValue icon={product.category.icon!} />
+                            <span>{product.category.name || 'Unknown'}</span>
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          ${product.price.toFixed(2)}
+                          ${toNumber(product.price).toFixed(2)}
                         </td>
                         <td className="px-4 py-3">
                           <span
@@ -327,6 +333,31 @@ export function ProductsPage() {
             </table>
           </div>
         </Card>
+      )}
+
+      {/* No products */}
+      {sortedProducts.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground border border-dashed rounded-lg">
+          <svg
+            className="h-12 w-12 mb-4 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 10h1m10 0h8m-8 4h8m-8 4h8m-8-8h8m-8-4h8M3 6h1m0 0v12m0-12h11m0 12H4m7-4h1"
+            />
+          </svg>
+          <h3 className="text-lg font-semibold">No products found</h3>
+          <p className="text-sm">Get started by adding your first product.</p>
+          <Button className="mt-4" onClick={() => navigate('/products/add')}>
+            Add Product
+          </Button>
+        </div>
       )}
 
       <div className="flex justify-between">

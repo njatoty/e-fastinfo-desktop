@@ -54,6 +54,21 @@ const formSchema = z.object({
   imageUrl: z.string().url({
     message: 'Please enter a valid URL for the product image.',
   }),
+  originalPrice: z.preprocess(
+    (val) => {
+      if (val === '' || val === null || val === undefined) return undefined;
+      return parseFloat(val as string);
+    },
+    z
+      .number()
+      .positive({
+        message: 'Original price must be a positive number.',
+      })
+      .min(0.01, {
+        message: 'Original price must be at least 0.01.',
+      })
+      .optional() // this makes it optional
+  ),
   price: z.preprocess(
     (val) => parseFloat(val as string),
     z
@@ -95,6 +110,7 @@ export function AddProductPage() {
       imageUrl: '',
       price: undefined,
       stockQuantity: undefined,
+      originalPrice: undefined,
     },
   });
 
@@ -102,6 +118,11 @@ export function AddProductPage() {
     setIsSubmitting(true);
 
     try {
+      // Upload the selected image to destination folders and get its url path
+      const productImageUrl = await window.electron.ipcRenderer.downloadImage(
+        data.imageUrl
+      );
+
       addProduct({
         price: data.price as number,
         stockQuantity: data.stockQuantity as number,
@@ -110,7 +131,7 @@ export function AddProductPage() {
         },
         name: data.name,
         description: data.description,
-        imageUrl: data.imageUrl,
+        imageUrl: productImageUrl || data.imageUrl,
       });
 
       toast.success('Product added successfully');
@@ -262,13 +283,32 @@ export function AddProductPage() {
                 )}
               />
 
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <FormField
                   control={form.control}
                   name="price"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Price ($)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="originalPrice"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Original Price ($)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"

@@ -19,10 +19,7 @@ import { useProducts } from '@/context/product-context';
 import { format } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -59,17 +56,23 @@ import { Separator } from '@/components/ui/separator';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { IconValue } from '@/components/icon-picker';
+import { toNumber } from '@/lib/utils';
 
 const stockFormSchema = z.object({
   quantity: z.preprocess(
     (val) => parseInt(val as string, 10),
-    z.number()
+    z
+      .number()
       .min(-999999, { message: 'Quantity too low' })
       .max(999999, { message: 'Quantity too high' })
   ),
   note: z.string().min(1, { message: 'Note is required' }).max(500),
   customerName: z.string().optional(),
-  customerEmail: z.string().email({ message: 'Invalid email address' }).optional(),
+  customerEmail: z
+    .string()
+    .email({ message: 'Invalid email address' })
+    .optional(),
   customerPhone: z.string().optional(),
   orderReference: z.string().optional(),
   shippingAddress: z.string().optional(),
@@ -86,8 +89,10 @@ export function ProductDetailPage() {
   const [isStockDialogOpen, setIsStockDialogOpen] = useState(false);
   const [stockAction, setStockAction] = useState<'add' | 'remove'>('add');
 
-  const product = products.find(p => p.id === id);
-  const category = categories.find(c => product && c.id === product.categoryId);
+  const product = products.find((p) => p.id === id);
+  const category = categories.find(
+    (c) => product && c.id === product.categoryId
+  );
 
   const stockForm = useForm<StockFormValues>({
     resolver: zodResolver(stockFormSchema),
@@ -129,7 +134,10 @@ export function ProductDetailPage() {
     try {
       const quantity = stockAction === 'add' ? data.quantity : -data.quantity;
 
-      if (stockAction === 'remove' && Math.abs(quantity) > product.stockQuantity) {
+      if (
+        stockAction === 'remove' &&
+        Math.abs(quantity) > product.stockQuantity
+      ) {
         toast.error('Cannot remove more items than available in stock');
         return;
       }
@@ -138,19 +146,23 @@ export function ProductDetailPage() {
 
       // Add customer details to note if available (for sales)
       if (stockAction === 'remove' && data.customerName) {
-        note = `Sale - ${data.customerName}\n` +
+        note =
+          `Sale - ${data.customerName}\n` +
           `Order Ref: ${data.orderReference || 'N/A'}\n` +
-          `Contact: ${data.customerEmail || 'N/A'} / ${data.customerPhone || 'N/A'}\n` +
+          `Contact: ${data.customerEmail || 'N/A'} / ${
+            data.customerPhone || 'N/A'
+          }\n` +
           `Shipping: ${data.shippingAddress || 'N/A'}\n\n` +
           `Note: ${data.note}`;
       }
 
       updateStock(product.id, {
-        quantity,
-        note,
+        stockQuantity: quantity,
       });
 
-      toast.success(`Stock ${stockAction === 'add' ? 'added' : 'removed'} successfully`);
+      toast.success(
+        `Stock ${stockAction === 'add' ? 'added' : 'removed'} successfully`
+      );
       setIsStockDialogOpen(false);
       stockForm.reset();
     } catch (error) {
@@ -181,12 +193,11 @@ export function ProductDetailPage() {
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">{product.name}</h2>
+            <h2 className="text-3xl font-bold tracking-tight">
+              {product.name}
+            </h2>
             <div className="flex items-center mt-1">
-              <div
-                className="w-2 h-2 mr-2 rounded-full"
-                style={{ backgroundColor: category?.color || 'gray' }}
-              />
+              <IconValue icon={product.category.icon!} />
               <span className="text-muted-foreground">
                 {category?.name || 'Uncategorized'}
               </span>
@@ -222,7 +233,10 @@ export function ProductDetailPage() {
               </DialogHeader>
 
               <Form {...stockForm}>
-                <form onSubmit={stockForm.handleSubmit(handleStockSubmit)} className="space-y-4">
+                <form
+                  onSubmit={stockForm.handleSubmit(handleStockSubmit)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={stockForm.control}
                     name="quantity"
@@ -230,16 +244,11 @@ export function ProductDetailPage() {
                       <FormItem>
                         <FormLabel>Quantity</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            min="1"
-                            {...field}
-                          />
+                          <Input type="number" min="1" {...field} />
                         </FormControl>
                         <FormDescription>
                           {stockAction === 'remove' &&
-                            `Available stock: ${product.stockQuantity}`
-                          }
+                            `Available stock: ${product.stockQuantity}`}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -294,7 +303,11 @@ export function ProductDetailPage() {
                               <FormControl>
                                 <div className="relative">
                                   <Mail className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                  <Input type="email" className="pl-8" {...field} />
+                                  <Input
+                                    type="email"
+                                    className="pl-8"
+                                    {...field}
+                                  />
                                 </div>
                               </FormControl>
                               <FormMessage />
@@ -351,8 +364,8 @@ export function ProductDetailPage() {
                           <Textarea
                             placeholder={
                               stockAction === 'add'
-                                ? "Enter reason for stock addition..."
-                                : "Enter any additional notes about the sale..."
+                                ? 'Enter reason for stock addition...'
+                                : 'Enter any additional notes about the sale...'
                             }
                             {...field}
                           />
@@ -396,7 +409,10 @@ export function ProductDetailPage() {
             Edit Product
           </Button>
 
-          <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
             <AlertDialogTrigger asChild>
               <Button variant="destructive">
                 <Trash className="w-4 h-4 mr-2" />
@@ -407,8 +423,8 @@ export function ProductDetailPage() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the product
-                  "{product.name}" from the database.
+                  This action cannot be undone. This will permanently delete the
+                  product "{product.name}" from the database.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -430,7 +446,7 @@ export function ProductDetailPage() {
               <img
                 src={product.imageUrl}
                 alt={product.name}
-                className="object-cover w-full h-full"
+                className="object-contain w-full h-full"
               />
             </div>
             <div className="p-6">
@@ -440,20 +456,27 @@ export function ProductDetailPage() {
                   <DollarSign className="w-4 h-4 mr-2 text-muted-foreground" />
                   <div>
                     <span className="text-muted-foreground">Price</span>
-                    <p className="font-medium">${product.price.toFixed(2)}</p>
+                    <p className="font-medium">
+                      ${toNumber(product.price).toFixed(2)}
+                    </p>
                   </div>
                 </div>
 
                 <div className="flex items-center text-sm">
                   <Package className="w-4 h-4 mr-2 text-muted-foreground" />
                   <div>
-                    <span className="text-muted-foreground">Stock Quantity</span>
-                    <p className={`font-medium ${product.stockQuantity < 5
-                      ? 'text-rose-500'
-                      : product.stockQuantity < 10
-                        ? 'text-amber-500'
-                        : ''
-                      }`}>
+                    <span className="text-muted-foreground">
+                      Stock Quantity
+                    </span>
+                    <p
+                      className={`font-medium ${
+                        product.stockQuantity < 5
+                          ? 'text-rose-500'
+                          : product.stockQuantity < 10
+                          ? 'text-amber-500'
+                          : ''
+                      }`}
+                    >
                       {product.stockQuantity} units
                     </p>
                   </div>
@@ -463,7 +486,9 @@ export function ProductDetailPage() {
                   <Tag className="w-4 h-4 mr-2 text-muted-foreground" />
                   <div>
                     <span className="text-muted-foreground">Category</span>
-                    <p className="font-medium">{category?.name || 'Uncategorized'}</p>
+                    <p className="font-medium">
+                      {category?.name || 'Uncategorized'}
+                    </p>
                   </div>
                 </div>
 
@@ -471,7 +496,9 @@ export function ProductDetailPage() {
                   <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                   <div>
                     <span className="text-muted-foreground">Added on</span>
-                    <p className="font-medium">{formatDate(product.createdAt)}</p>
+                    <p className="font-medium">
+                      {formatDate(product.createdAt.toISOString())}
+                    </p>
                   </div>
                 </div>
 
@@ -479,7 +506,9 @@ export function ProductDetailPage() {
                   <Calendar className="w-4 h-4 mr-2 text-muted-foreground" />
                   <div>
                     <span className="text-muted-foreground">Last updated</span>
-                    <p className="font-medium">{formatDate(product.updatedAt)}</p>
+                    <p className="font-medium">
+                      {formatDate(product.updatedAt.toISOString())}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -499,14 +528,20 @@ export function ProductDetailPage() {
               <Separator />
 
               <div>
-                <h3 className="mb-4 text-xl font-semibold">Inventory Summary</h3>
+                <h3 className="mb-4 text-xl font-semibold">
+                  Inventory Summary
+                </h3>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="p-4 border rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Current Stock</p>
-                        <p className="text-2xl font-bold">{product.stockQuantity}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Current Stock
+                        </p>
+                        <p className="text-2xl font-bold">
+                          {product.stockQuantity}
+                        </p>
                       </div>
                       <Package className="w-8 h-8 text-muted-foreground/30" />
                     </div>
@@ -515,9 +550,14 @@ export function ProductDetailPage() {
                   <div className="p-4 border rounded-lg">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Total Value</p>
+                        <p className="text-sm text-muted-foreground">
+                          Total Value
+                        </p>
                         <p className="text-2xl font-bold">
-                          ${(product.price * product.stockQuantity).toFixed(2)}
+                          $
+                          {(
+                            toNumber(product.price) * product.stockQuantity
+                          ).toFixed(2)}
                         </p>
                       </div>
                       <DollarSign className="w-8 h-8 text-muted-foreground/30" />
@@ -530,7 +570,9 @@ export function ProductDetailPage() {
 
               <div>
                 <h3 className="mb-4 text-xl font-semibold">Product ID</h3>
-                <p className="font-mono text-sm text-muted-foreground">{product.id}</p>
+                <p className="font-mono text-sm text-muted-foreground">
+                  {product.id}
+                </p>
               </div>
             </div>
           </CardContent>

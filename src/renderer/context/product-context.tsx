@@ -1,12 +1,16 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { ProductStats, StockMovement, StockUpdate } from '@/types';
+import { ProductStats, StockMovement } from '@/types';
 import { useAuth } from '@/context/auth-context';
-import { productService } from '@/components/services/product.service';
+import {
+  productService,
+  ProductWithIncludes,
+} from '@/components/services/product.service';
 import type { Prisma, Product, Category } from '@prisma/client';
 import { categoryService } from '@/components/services/category.service';
+import { toNumber } from '@/lib/utils';
 
 interface ProductContextType {
-  products: Product[];
+  products: ProductWithIncludes[];
   categories: Category[];
   stats: ProductStats;
   stockMovements: StockMovement[];
@@ -49,7 +53,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { user } = useAuth();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithIncludes[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [stockMovements, setStockMovements] = useState<StockMovement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,7 +96,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({
   const stats: ProductStats = {
     totalProducts: products.length,
     totalValue: products.reduce(
-      (sum, product) => sum + product.price.toNumber() * product.stockQuantity,
+      (sum, product) => sum + toNumber(product.price) * product.stockQuantity,
       0
     ),
     lowStockItems: products.filter((p) => p.stockQuantity < 5).length,

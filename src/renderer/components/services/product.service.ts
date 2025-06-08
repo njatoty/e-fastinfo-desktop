@@ -1,7 +1,13 @@
 import type { Product, Category, Prisma } from '@prisma/client';
 import { prisma, handleServiceError } from './utils';
 
-export type ProductWithCategory = Product & { category: Category };
+export type ProductWithIncludes = Prisma.ProductGetPayload<{
+  include: {
+    category: true;
+    managingStaff: true;
+    discounts: true;
+  };
+}>;
 // ============================================================================
 // PRODUCT SERVICE
 // ============================================================================
@@ -10,7 +16,7 @@ export const productService = {
    * Retrieves all products with their category.
    */
   getAll: async (): Promise<{
-    data: Product[] | null;
+    data: ProductWithIncludes[] | null;
     error: string | null;
   }> => {
     try {
@@ -28,7 +34,9 @@ export const productService = {
    * Retrieves a single product by its ID.
    * @param id - The UUID of the product.
    */
-  getById: async (id: string) => {
+  getById: async (
+    id: string
+  ): Promise<{ data: ProductWithIncludes | null; error: string | null }> => {
     try {
       const product = await prisma.product.findUnique({
         where: { id },
@@ -48,7 +56,9 @@ export const productService = {
    * Creates a new product.
    * @param productData - Data for the new product.
    */
-  create: async (productData: Prisma.ProductCreateInput) => {
+  create: async (
+    productData: Prisma.ProductCreateInput
+  ): Promise<{ data: ProductWithIncludes | null; error: string | null }> => {
     try {
       const newProduct = await prisma.product.create({
         data: productData,
@@ -69,7 +79,10 @@ export const productService = {
    * @param id - The UUID of the product to update.
    * @param updateData - The data to update.
    */
-  update: async (id: string, updateData: Prisma.ProductUpdateInput) => {
+  update: async (
+    id: string,
+    updateData: Prisma.ProductUpdateInput
+  ): Promise<{ data: ProductWithIncludes | null; error: string | null }> => {
     try {
       const updatedProduct = await prisma.product.update({
         where: { id },
@@ -92,7 +105,7 @@ export const productService = {
    */
   delete: async (
     id: string
-  ): Promise<{ data: ProductWithCategory | null; error: string | null }> => {
+  ): Promise<{ data: ProductWithIncludes | null; error: string | null }> => {
     try {
       const deletedProduct = await prisma.product.delete({
         where: { id },
@@ -112,7 +125,9 @@ export const productService = {
    * Searches for products by name or description.
    * @param searchTerm - The term to search for.
    */
-  search: async (searchTerm: string) => {
+  search: async (
+    searchTerm: string
+  ): Promise<{ data: ProductWithIncludes[] | null; error: string | null }> => {
     try {
       const products = await prisma.product.findMany({
         where: {
