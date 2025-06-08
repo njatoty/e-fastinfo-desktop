@@ -67,7 +67,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-electron-content flex-col bg-muted/40">
+    <div className="flex min-h-electron-content flex-col bg-muted/50">
       <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex justify-center">

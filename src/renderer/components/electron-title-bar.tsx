@@ -33,7 +33,7 @@ export function ElectronTopBar() {
       {/* Left side: Icon + Theme dropdown */}
       <div className="flex items-center gap-2 px-2">
         <Laptop className="w-5 h-5" />
-        <span className="text-sm">Store management</span>
+        <span className="text-sm/3 text-foreground/50">Store management</span>
       </div>
 
       {/* Right side: Window control buttons */}

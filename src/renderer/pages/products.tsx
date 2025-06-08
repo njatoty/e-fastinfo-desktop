@@ -215,11 +215,11 @@ export function ProductsPage() {
           })}
         </div>
       ) : (
-        <div className="border rounded-md">
+        <Card className="p-2">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b bg-muted/50">
+                <tr className="border-b bg-muted/20">
                   <th className="px-4 py-3 font-medium text-left">Product</th>
                   <th className="px-4 py-3 font-medium text-left">Category</th>
                   <th className="px-4 py-3 font-medium text-left">Price</th>
@@ -327,7 +327,7 @@ export function ProductsPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       )}
 
       <div className="flex justify-between">

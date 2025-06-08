@@ -27,6 +27,9 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
+import ImageSearch from '@/components/ImageSearch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ImageUpload } from '@/components/ImageUpload';
 
 const formSchema = z.object({
   name: z
@@ -81,6 +84,7 @@ export function AddProductPage() {
   const { categories, addProduct } = useProducts();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [queryImage, setQueryImage] = useState('');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -205,15 +209,50 @@ export function AddProductPage() {
                 name="imageUrl"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Product Image</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="https://example.com/image.jpg"
-                        {...field}
-                      />
+                      <>
+                        <Tabs defaultValue="search" className="w-full">
+                          <TabsList className="grid w-full grid-cols-2 mb-4">
+                            <TabsTrigger value="upload">
+                              Upload Image
+                            </TabsTrigger>
+                            <TabsTrigger value="search">
+                              Search Online
+                            </TabsTrigger>
+                          </TabsList>
+
+                          <TabsContent value="upload" className="space-y-2">
+                            <ImageUpload
+                              // value={field.value}
+                              onChange={async (url: string) => {
+                                field.onChange(url);
+                              }}
+                              label="Product Image"
+                              description="Upload an image of the product"
+                            />
+                          </TabsContent>
+
+                          <TabsContent value="search" className="space-y-2">
+                            <Input
+                              type="text"
+                              placeholder="Search images"
+                              value={queryImage}
+                              onChange={(e) => setQueryImage(e.target.value)}
+                            />
+
+                            <ImageSearch
+                              query={queryImage}
+                              onSelect={async (url) => {
+                                field.onChange(url);
+                              }}
+                            />
+                          </TabsContent>
+                        </Tabs>
+                      </>
                     </FormControl>
                     <FormDescription>
-                      Provide a URL to an image of the product.
+                      You can upload an image or search online and select one.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
