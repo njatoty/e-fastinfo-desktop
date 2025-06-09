@@ -303,6 +303,12 @@ ipcMain.handle('download-image', async (event, url: string) => {
       const srcFilename = path.basename(srcPath); // extract just the filename
       const destPath = path.join(imagesFolder, srcFilename); // safe destination
 
+      // if source and destination are the same
+      if (destPath === srcPath) {
+        event.returnValue = destPath;
+        return;
+      }
+
       await fs.promises.copyFile(srcPath, destPath);
       event.returnValue = destPath;
       return;

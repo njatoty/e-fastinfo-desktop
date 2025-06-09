@@ -1,4 +1,4 @@
-import type { Category, Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { prisma, handleServiceError } from './utils';
 
 // A custom type for the getAll response to include the product count

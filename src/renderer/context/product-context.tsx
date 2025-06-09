@@ -5,7 +5,7 @@ import {
   productService,
   ProductWithIncludes,
 } from '@/components/services/product.service';
-import type { Prisma, Product, Category } from '@prisma/client';
+import type { Prisma, Product } from '@prisma/client';
 import {
   categoryService,
   CategoryWithIncludes,
@@ -14,7 +14,7 @@ import { toNumber } from '@/lib/utils';
 
 interface ProductContextType {
   products: ProductWithIncludes[];
-  categories: Category[];
+  categories: CategoryWithIncludes[];
   stats: ProductStats;
   stockMovements: StockMovement[];
   loading: boolean;
