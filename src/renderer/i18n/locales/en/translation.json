@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "general": "General",
+    "dashboard": "Dashboard",
+    "management": "Management",
+    "products": "Products",
+    "categories": "Categories",
+    "staff": "Staff",
+    "inventory": "Inventory",
+    "lowStock": "Low Stock",
+    "stockMovements": "Stock Movements",
+    "settingsGroup": "Settings",
+    "settings": "Settings"
+  }
+}

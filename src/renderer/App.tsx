@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/context/auth-context';
 import { ProductProvider } from '@/context/product-context';
 import { AppRoutes } from '@/routes/index';
-
+import '@/i18n/index';
 import './styles/main.css';
 
 function App() {

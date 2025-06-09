@@ -43,7 +43,9 @@ type SortOption =
   | 'price-asc'
   | 'price-desc'
   | 'stock-asc'
-  | 'stock-desc';
+  | 'stock-desc'
+  | 'date-asc'
+  | 'date-desc';
 type ViewMode = 'grid' | 'table';
 
 export function ProductsPage() {
@@ -84,13 +86,22 @@ export function ProductsPage() {
         case 'name-desc':
           return b.name.localeCompare(a.name);
         case 'price-asc':
-          return a.price.toNumber() - b.price.toNumber();
+          return toNumber(a.price) - toNumber(b.price);
         case 'price-desc':
-          return b.price.toNumber() - a.price.toNumber();
+          return toNumber(b.price) - toNumber(a.price);
         case 'stock-asc':
           return a.stockQuantity - b.stockQuantity;
         case 'stock-desc':
           return b.stockQuantity - a.stockQuantity;
+        case 'date-asc':
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        case 'date-desc':
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+
         default:
           return 0;
       }
@@ -191,6 +202,12 @@ export function ProductsPage() {
               <SelectItem value="price-desc">Price (High to Low)</SelectItem>
               <SelectItem value="stock-asc">Stock (Low to High)</SelectItem>
               <SelectItem value="stock-desc">Stock (High to Low)</SelectItem>
+              <SelectItem value="date-asc">
+                Date Created (Oldest First)
+              </SelectItem>
+              <SelectItem value="date-desc">
+                Date Created (Newest First)
+              </SelectItem>
             </SelectContent>
           </Select>
 
