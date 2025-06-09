@@ -50,7 +50,7 @@ const api = {
       }
     },
     downloadImage: (url, outputPath) =>
-      ipcRenderer.invoke('download-image', url, outputPath),
+      ipcRenderer.invoke('download-image', url),
   },
 };
 

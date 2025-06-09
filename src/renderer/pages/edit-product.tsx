@@ -103,6 +103,8 @@ export function EditProductPage() {
         data.imageUrl
       );
 
+      console.log(productImageUrl, data.imageUrl);
+
       updateProduct(product.id, {
         ...data,
         imageUrl: productImageUrl || product.imageUrl,

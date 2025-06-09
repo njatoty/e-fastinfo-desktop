@@ -39,7 +39,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-auto max-h-[300px] object-contain"
+          className="w-full h-[300px] object-contain"
         />
         <div className="absolute top-2 right-2">
           <DropdownMenu>

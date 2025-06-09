@@ -46,7 +46,7 @@ export const ImageUpload = ({
             <img
               src={preview}
               alt="Uploaded preview"
-              className="mt-2 object-cover w-auto aspect-video rounded border"
+              className="mt-2 object-contain w-auto aspect-video rounded-lg border"
             />
           )}
         </>

@@ -82,6 +82,7 @@ const createWindow = async () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
+      webSecurity: false,
     },
     disableAutoHideCursor: true,
     // frame: false,
@@ -296,6 +297,7 @@ ipcMain.on('app:minimize', (event) => {
 });
 
 ipcMain.handle('download-image', async (event, url: string) => {
+  event.preventDefault();
   try {
     // Case 1: URL is a local file path
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -305,18 +307,17 @@ ipcMain.handle('download-image', async (event, url: string) => {
 
       // if source and destination are the same
       if (destPath === srcPath) {
-        event.returnValue = destPath;
-        return;
+        return srcPath; // just return the path
       }
 
       await fs.promises.copyFile(srcPath, destPath);
-      event.returnValue = destPath;
-      return;
+      return destPath;
     }
 
+    // Case 2: URL is online, download with axios
     const filename = url.split('/').pop()?.split('?')[0] || 'image.png';
     const savePath = path.join(imagesFolder, filename);
-    // Case 2: URL is online, download with axios
+
     const response = await axios({
       url,
       method: 'GET',
@@ -327,15 +328,18 @@ ipcMain.handle('download-image', async (event, url: string) => {
       },
     });
 
-    const writer = fs.createWriteStream(savePath);
-    response.data.pipe(writer);
+    // Wrap the stream in a Promise
+    await new Promise<void>((resolve, reject) => {
+      const writer = fs.createWriteStream(savePath);
+      response.data.pipe(writer);
 
-    event.returnValue = new Promise((resolve) => {
-      writer.on('finish', () => resolve(savePath));
-      writer.on('error', () => resolve(null));
+      writer.on('finish', resolve);
+      writer.on('error', reject);
     });
+
+    return savePath;
   } catch (error) {
     console.error('Error in download-image:', error);
-    event.returnValue = null;
+    return null;
   }
 });
