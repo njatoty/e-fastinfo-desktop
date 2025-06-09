@@ -10,26 +10,12 @@ import {
 import { MoreHorizontal, Eye, Pencil, Trash, Package } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
 import { Button } from './ui/button';
-
-interface Category {
-  id: string;
-  name: string;
-  color?: string;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
-  stockQuantity: number;
-  price: number;
-  category?: Category;
-}
+import { IconValue } from './icon-picker';
+import { ProductWithIncludes } from './services/product.service';
+import { toNumber } from '@/lib/utils';
 
 interface ProductCardProps {
-  product: Product;
-  category?: Category;
+  product: ProductWithIncludes;
   onView: (id: string, e: React.MouseEvent) => void;
   onEdit: (id: string, e: React.MouseEvent) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
@@ -37,7 +23,6 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({
   product,
-  category,
   onView,
   onEdit,
   onDelete,
@@ -54,7 +39,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-full h-auto max-h-[300px] object-cover"
+          className="w-full h-auto max-h-[300px] object-contain"
         />
         <div className="absolute top-2 right-2">
           <DropdownMenu>
@@ -87,12 +72,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
       <CardHeader className="p-4">
         <div className="flex items-center gap-2 mb-2">
-          <div
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: category?.color || 'gray' }}
-          />
+          <IconValue icon={product.category.icon!} />
           <span className="text-sm text-muted-foreground">
-            {category?.name || 'Unknown'}
+            {product.category.name || 'Unknown'}
           </span>
         </div>
         <h3 className="font-semibold truncate">{product.name}</h3>
@@ -119,7 +101,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             {product.stockQuantity}
           </span>
         </div>
-        <span className="font-semibold">${product.price.toFixed(2)}</span>
+        <span className="font-semibold">
+          ${toNumber(product.price).toFixed(2)}
+        </span>
       </CardFooter>
     </Card>
   );
