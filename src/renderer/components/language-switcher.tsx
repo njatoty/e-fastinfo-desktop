@@ -11,9 +11,6 @@ import { GlobeIcon, CheckIcon } from 'lucide-react';
 const languages = [
   { code: 'en', label: 'English' },
   { code: 'fr', label: 'Français' },
-  { code: 'de', label: 'Deutsch' },
-  { code: 'es', label: 'Español' },
-  { code: 'jp', label: '日本語' },
 ];
 
 export function LanguageSwitcher() {
