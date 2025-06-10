@@ -1,103 +1,141 @@
-import { 
-  ArrowDown, 
-  ArrowUp, 
-  Package, 
-  DollarSign, 
+import {
+  ArrowDown,
+  ArrowUp,
+  Package,
+  DollarSign,
   AlertTriangle,
-  PieChart
+  PieChart,
 } from 'lucide-react';
 import { useProducts } from '@/context/product-context';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart as RechartsBarChart,
   Pie,
   Cell,
-  Legend
+  Legend,
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { toNumber } from '@/lib/utils';
+import { IconValue } from '@/components/icon-picker';
+import { useTranslation } from 'react-i18next';
 
 export function DashboardPage() {
   const { products, categories, stats, loading } = useProducts();
   const navigate = useNavigate();
-  
+  const { t } = useTranslation();
+
   // Get low stock products (stock < 5)
-  const lowStockProducts = products.filter(product => product.stockQuantity < 5);
-  
+  const lowStockProducts = products.filter(
+    (product) => product.stockQuantity < 5
+  );
+
   // Calculate some random stats for demo purposes
   const previousTotalValue = stats.totalValue * 0.85; // Fake previous value
   const valueChange = stats.totalValue - previousTotalValue;
   const valueChangePercent = (valueChange / previousTotalValue) * 100;
-  
+
   const previousLowStock = 3; // Fake previous low stock count
   const lowStockChange = lowStockProducts.length - previousLowStock;
-  
-  const inventoryData = categories.map(category => ({
+
+  const inventoryData = categories.map((category) => ({
     name: category.name,
-    value: products.filter(product => product.categoryId === category.id).length,
-    color: category.color
+    value: products.filter((product) => product.categoryId === category.id)
+      .length,
+    icon: category.icon,
   }));
-  
+
   const priceRangeData = [
-    { name: "$0-$99", count: products.filter(p => p.price < 100).length },
-    { name: "$100-$299", count: products.filter(p => p.price >= 100 && p.price < 300).length },
-    { name: "$300-$499", count: products.filter(p => p.price >= 300 && p.price < 500).length },
-    { name: "$500+", count: products.filter(p => p.price >= 500).length },
+    {
+      name: '$0-$99',
+      count: products.filter((p) => toNumber(p.price) < 100).length,
+    },
+    {
+      name: '$100-$299',
+      count: products.filter(
+        (p) => toNumber(p.price) >= 100 && toNumber(p.price) < 300
+      ).length,
+    },
+    {
+      name: '$300-$499',
+      count: products.filter(
+        (p) => toNumber(p.price) >= 300 && toNumber(p.price) < 500
+      ).length,
+    },
+    {
+      name: '$500+',
+      count: products.filter((p) => toNumber(p.price) >= 500).length,
+    },
   ];
-  
+
   if (loading) {
-    return <div className="flex items-center justify-center h-[calc(100vh-4rem)]">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+        Loading...
+      </div>
+    );
   }
-  
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">
-            Overview of your electronics inventory
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight">
+            {t('dashboard.title')}
+          </h2>
+          <p className="text-muted-foreground">{t('dashboard.subtitle')}</p>
         </div>
         <Button onClick={() => navigate('/products/add')}>
-          Add new product
+          {t('products.actions.add')}
         </Button>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Total Products Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Products
+              {t('dashboard.cards.activeProducts.title')}
             </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalProducts}</div>
             <p className="text-xs text-muted-foreground">
-              Across {categories.length} categories
+              {t('dashboard.cards.activeProducts.acrossCategory', {
+                count: categories.length,
+              })}
             </p>
           </CardContent>
         </Card>
-        
+
         {/* Inventory Value Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Inventory Value
+              {t('dashboard.cards.inventoryValues.title')}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${stats.totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              $
+              {stats.totalValue.toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })}
             </div>
             <div className="flex items-center text-xs">
               {valueChange > 0 ? (
@@ -116,17 +154,19 @@ export function DashboardPage() {
                 </>
               )}
               <span className="ml-1 text-muted-foreground">
-                from last month
+                {t('dashboard.cards.inventoryValues.change', {
+                  period: 'month',
+                })}
               </span>
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Low Stock Alert Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Low Stock Alerts
+              {t('dashboard.cards.lowStockItems.title')}
             </CardTitle>
             <AlertTriangle className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -152,32 +192,37 @@ export function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Categories Card */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Categories
+              {t('dashboard.cards.totalCategories.title')}
             </CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{categories.length}</div>
             <p className="text-xs text-muted-foreground">
-              Most popular: {
-                categories.length > 0 
-                  ? categories.reduce((prev, current) => {
-                      const prevCount = products.filter(p => p.categoryId === prev.id).length;
-                      const currentCount = products.filter(p => p.categoryId === current.id).length;
-                      return prevCount > currentCount ? prev : current;
-                    }).name
-                  : 'None'
-              }
+              {t('dashboard.cards.totalCategories.mostPopular', {
+                category:
+                  categories.length > 0
+                    ? categories.reduce((prev, current) => {
+                        const prevCount = products.filter(
+                          (p) => p.categoryId === prev.id
+                        ).length;
+                        const currentCount = products.filter(
+                          (p) => p.categoryId === current.id
+                        ).length;
+                        return prevCount > currentCount ? prev : current;
+                      }).name
+                    : 'None',
+              })}
             </p>
           </CardContent>
         </Card>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         {/* Products by Category Chart */}
         <Card className="lg:col-span-4">
@@ -193,19 +238,19 @@ export function DashboardPage() {
                 <BarChart data={stats.categoryCounts} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
-                  <YAxis 
-                    dataKey="categoryName" 
-                    type="category" 
+                  <YAxis
+                    dataKey="categoryName"
+                    type="category"
                     width={100}
                     tick={{ fontSize: 12 }}
                   />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value) => [`${value} products`, 'Count']}
                     labelFormatter={(label) => `Category: ${label}`}
                   />
-                  <Bar 
-                    dataKey="count" 
-                    fill="hsl(var(--primary))" 
+                  <Bar
+                    dataKey="count"
+                    fill="hsl(var(--primary))"
                     radius={[0, 4, 4, 0]}
                   />
                 </BarChart>
@@ -213,14 +258,12 @@ export function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-        
+
         {/* Price Distribution Chart */}
         <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle>Price Distribution</CardTitle>
-            <CardDescription>
-              Products by price range
-            </CardDescription>
+            <CardDescription>Products by price range</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-80">
@@ -234,20 +277,20 @@ export function DashboardPage() {
                     outerRadius={90}
                     paddingAngle={2}
                     dataKey="count"
-                    label={({ name, percent }) => 
+                    label={({ name, percent }) =>
                       `${name}: ${(percent * 100).toFixed(0)}%`
                     }
                     labelLine={false}
                   >
                     {priceRangeData.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={`hsl(var(--chart-${(index % 5) + 1}))`} 
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={`hsl(var(--chart-${(index % 5) + 1}))`}
                       />
                     ))}
                   </Pie>
                   <Legend />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value) => [`${value} products`, 'Count']}
                   />
                 </RechartsBarChart>
@@ -256,7 +299,7 @@ export function DashboardPage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Low Stock Products List */}
       <Card>
         <CardHeader>
@@ -282,28 +325,29 @@ export function DashboardPage() {
                 </thead>
                 <tbody>
                   {lowStockProducts.map((product) => {
-                    const category = categories.find(c => c.id === product.categoryId);
+                    const category = categories.find(
+                      (c) => c.id === product.categoryId
+                    );
                     return (
-                      <tr 
-                        key={product.id} 
+                      <tr
+                        key={product.id}
                         className="border-b last:border-b-0 hover:bg-muted/50 cursor-pointer"
                         onClick={() => navigate(`/products/${product.id}`)}
                       >
                         <td className="py-3">
                           <div className="flex items-center gap-3">
-                            <div 
-                              className="h-8 w-8 rounded bg-cover bg-center bg-no-repeat" 
-                              style={{ backgroundImage: `url(${product.imageUrl})` }}
+                            <div
+                              className="h-8 w-8 rounded bg-cover bg-center bg-no-repeat"
+                              style={{
+                                backgroundImage: `url(${product.imageUrl})`,
+                              }}
                             />
                             <span className="font-medium">{product.name}</span>
                           </div>
                         </td>
                         <td className="py-3">
                           <div className="flex items-center gap-2">
-                            <div 
-                              className="h-2 w-2 rounded-full" 
-                              style={{ backgroundColor: category?.color || 'gray' }}
-                            />
+                            <IconValue icon={category?.name!} />
                             <span>{category?.name || 'Unknown'}</span>
                           </div>
                         </td>

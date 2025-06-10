@@ -1,18 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import {
-  LayoutDashboard,
-  Package,
-  Tag,
-  Settings,
-  Users,
-  AlertTriangle,
-  ChevronRight,
-  Laptop,
-  History,
-} from 'lucide-react';
+import { ChevronRight, Laptop } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useNavGroups } from '@/hooks/use-nav-groups';
 
 interface SidebarProps {
   open: boolean;
@@ -20,63 +11,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ open, onOpenChange }: SidebarProps) {
-  const navGroups = [
-    {
-      title: 'General',
-      items: [
-        {
-          title: 'Dashboard',
-          href: '/',
-          icon: LayoutDashboard,
-        },
-      ],
-    },
-    {
-      title: 'Management',
-      items: [
-        {
-          title: 'Products',
-          href: '/products',
-          icon: Package,
-        },
-        {
-          title: 'Categories',
-          href: '/categories',
-          icon: Tag,
-        },
-        {
-          title: 'Staff',
-          href: '/staff',
-          icon: Users,
-        },
-      ],
-    },
-    {
-      title: 'Inventory',
-      items: [
-        {
-          title: 'Low Stock',
-          href: '/low-stock',
-          icon: AlertTriangle,
-        },
-        {
-          title: 'Stock Movements',
-          href: '/stock-movements',
-          icon: History,
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      items: [
-        {
-          title: 'Settings',
-          href: '/settings',
-          icon: Settings,
-        },
-      ],
-    },
-  ];
+  const navGroups = useNavGroups();
 
   return (
     <>

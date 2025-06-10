@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { LanguageSwitcher } from '../language-switcher';
 
 interface HeaderProps {
   sidebarOpen: boolean;
@@ -46,6 +47,8 @@ export function Header({ sidebarOpen, onSidebarOpenChange }: HeaderProps) {
         </form>
 
         <div className="ml-auto flex items-center gap-4">
+          <LanguageSwitcher />
+
           <ThemeToggle />
 
           <Button variant="ghost" size="icon" className="text-muted-foreground">

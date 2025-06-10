@@ -1,0 +1,178 @@
+{
+  "nav": {
+    "general": "Général",
+    "dashboard": "Tableau de bord",
+    "management": "Gestion",
+    "products": "Produits",
+    "categories": "Catégories",
+    "staff": "Personnel",
+    "inventory": "Inventaire",
+    "lowStock": "Stock faible",
+    "stockMovements": "Mouvements de stock",
+    "settingsGroup": "Paramètres",
+    "settings": "Paramètres"
+  },
+  "dashboard": {
+    "title": "Aperçu du tableau de bord",
+    "subtitle": "Vue d'ensemble de votre inventaire électronique",
+    "cards": {
+      "inventoryValues": {
+        "title": "Valeurs d'inventaire",
+        "value": "{value}",
+        "change": "par rapport au {period} dernier"
+      },
+      "activeProducts": {
+        "title": "Produits actifs",
+        "value": "{value}",
+        "acrossCategory": "Répartis sur {count} {count, plural, one {catégorie} other {catégories}}"
+      },
+      "lowStockItems": {
+        "title": "Articles en stock faible",
+        "value": "{value}",
+        "alert": "Nécessite une attention"
+      },
+      "totalCategories": {
+        "title": "Catégories",
+        "value": "{value}",
+        "mostPopular": "Plus populaire : {category}"
+      },
+      "recentOrders": {
+        "title": "Commandes récentes",
+        "value": "{value}"
+      },
+      "productByCategory": {
+        "title": "Produits par catégorie",
+        "subtitle": "Répartition des produits par catégories"
+      }
+    },
+    "charts": {
+      "salesTrend": {
+        "title": "Tendance des ventes (30 jours)",
+        "labels": {
+          "xAxis": "Date",
+          "yAxis": "Montant"
+        }
+      },
+      "inventoryStatus": {
+        "title": "Statut de l'inventaire",
+        "labels": {
+          "inStock": "En stock",
+          "lowStock": "Stock faible",
+          "outOfStock": "Rupture de stock"
+        }
+      }
+    },
+    "recentActivity": {
+      "title": "Activité récente",
+      "types": {
+        "order": "Nouvelle commande #{id}",
+        "product": "Produit mis à jour : {name}",
+        "inventory": "Ajustement d'inventaire"
+      },
+      "viewAll": "Voir toute l'activité"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "buttons": {
+        "addProduct": "Ajouter un produit",
+        "createOrder": "Créer une commande",
+        "viewReports": "Voir les rapports",
+        "manageInventory": "Gérer l'inventaire"
+      }
+    }
+  },
+  "products": {
+    "singular": "Produit",
+    "plural": "Produits",
+    "title": "Produits",
+    "subtitle": "Gérez votre catalogue de produits",
+    "actions": {
+      "add": "Ajouter un produit",
+      "edit": "Modifier le produit",
+      "delete": "Supprimer le produit",
+      "export": "Exporter les produits"
+    },
+    "table": {
+      "headers": {
+        "name": "Nom du produit",
+        "sku": "SKU",
+        "price": "Prix",
+        "stock": "Stock",
+        "category": "Catégorie",
+        "status": "Statut"
+      }
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "draft": "Brouillon"
+    },
+    "form": {
+      "labels": {
+        "name": "Nom du produit",
+        "description": "Description",
+        "price": "Prix",
+        "cost": "Prix de revient",
+        "sku": "SKU",
+        "barcode": "Code-barres",
+        "quantity": "Quantité",
+        "category": "Catégorie",
+        "images": "Images du produit"
+      },
+      "placeholders": {
+        "name": "Entrez le nom du produit",
+        "description": "Entrez la description du produit",
+        "searchCategory": "Rechercher des catégories..."
+      },
+      "errors": {
+        "nameRequired": "Le nom du produit est requis",
+        "priceInvalid": "Le prix doit être un nombre valide"
+      }
+    },
+    "messages": {
+      "createSuccess": "{product} créé avec succès",
+      "updateSuccess": "{product} mis à jour avec succès",
+      "deleteSuccess": "{product} supprimé avec succès",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce {product} ?"
+    }
+  },
+  "categories": {
+    "singular": "Catégorie",
+    "plural": "Catégories",
+    "title": "Catégories",
+    "subtitle": "Organisez vos produits",
+    "actions": {
+      "add": "Ajouter une catégorie",
+      "edit": "Modifier la catégorie"
+    },
+    "table": {
+      "headers": {
+        "name": "Nom de la catégorie",
+        "products": "Nombre de produits",
+        "status": "Statut"
+      }
+    },
+    "messages": {
+      "createSuccess": "{category} créée avec succès",
+      "updateSuccess": "{category} mise à jour avec succès",
+      "deleteSuccess": "{category} supprimée avec succès",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette {category} ?"
+    }
+  },
+  "inventory": {
+    "singular": "Inventaire",
+    "lowStock": {
+      "title": "Alerte de stock faible",
+      "description": "Produits dont le niveau de stock est inférieur au seuil",
+      "threshold": "Seuil : {threshold} unités"
+    },
+    "stockMovements": {
+      "title": "Mouvements de stock",
+      "description": "Historique des modifications d'inventaire"
+    },
+    "stockItem": {
+      "singular": "Article en stock",
+      "plural": "Articles en stock"
+    }
+  }
+}
