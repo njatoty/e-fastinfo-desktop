@@ -12,22 +12,28 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { toNumber } from '@/lib/utils';
+import { IconValue } from '@/components/icon-picker';
 
 export function LowStockPage() {
-  const { products, categories, getProductsWithLowStock } = useProducts();
+  const { categories, getProductsWithLowStock } = useProducts();
   const navigate = useNavigate();
-  
+
   const [threshold, setThreshold] = useState(5);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [sortOption, setSortOption] = useState<'stock-asc' | 'stock-desc' | 'name-asc' | 'name-desc'>('stock-asc');
-  
+  const [sortOption, setSortOption] = useState<
+    'stock-asc' | 'stock-desc' | 'name-asc' | 'name-desc'
+  >('stock-asc');
+
   let lowStockProducts = getProductsWithLowStock(threshold);
-  
+
   // Apply category filter
   if (selectedCategory !== 'all') {
-    lowStockProducts = lowStockProducts.filter(product => product.categoryId === selectedCategory);
+    lowStockProducts = lowStockProducts.filter(
+      (product) => product.categoryId === selectedCategory
+    );
   }
-  
+
   // Apply sorting
   lowStockProducts.sort((a, b) => {
     switch (sortOption) {
@@ -43,16 +49,18 @@ export function LowStockPage() {
         return 0;
     }
   });
-  
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight">Low Stock Products</h2>
+        <h2 className="text-3xl font-bold tracking-tight">
+          Low Stock Products
+        </h2>
         <p className="text-muted-foreground">
           Monitor and manage products with low inventory
         </p>
       </div>
-      
+
       <div className="flex flex-col gap-4 md:flex-row">
         <div className="flex-1">
           <label className="text-sm font-medium">Stock Threshold</label>
@@ -64,12 +72,9 @@ export function LowStockPage() {
             className="max-w-[200px]"
           />
         </div>
-        
+
         <div className="flex gap-2">
-          <Select
-            value={selectedCategory}
-            onValueChange={setSelectedCategory}
-          >
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-[180px]">
               <Filter className="mr-2 h-4 w-4" />
               <SelectValue placeholder="Category" />
@@ -83,7 +88,7 @@ export function LowStockPage() {
               ))}
             </SelectContent>
           </Select>
-          
+
           <Select
             value={sortOption}
             onValueChange={(value: any) => setSortOption(value)}
@@ -101,7 +106,7 @@ export function LowStockPage() {
           </Select>
         </div>
       </div>
-      
+
       <div className="rounded-md border">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -117,38 +122,39 @@ export function LowStockPage() {
             <tbody>
               {lowStockProducts.length > 0 ? (
                 lowStockProducts.map((product) => {
-                  const category = categories.find(c => c.id === product.categoryId);
-                  const urgency = product.stockQuantity === 0 
-                    ? 'Out of Stock' 
-                    : product.stockQuantity < 3 
-                      ? 'Critical' 
+                  const urgency =
+                    product.stockQuantity === 0
+                      ? 'Out of Stock'
+                      : product.stockQuantity < 3
+                      ? 'Critical'
                       : 'Low';
-                  
+
                   return (
-                    <tr 
-                      key={product.id} 
+                    <tr
+                      key={product.id}
                       className="border-b last:border-b-0 hover:bg-muted/50 cursor-pointer"
                       onClick={() => navigate(`/products/${product.id}`)}
                     >
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
-                          <div 
-                            className="h-10 w-10 rounded bg-cover bg-center bg-no-repeat" 
-                            style={{ backgroundImage: `url(${product.imageUrl})` }}
+                          <div
+                            className="h-10 w-10 rounded bg-cover bg-center bg-no-repeat"
+                            style={{
+                              backgroundImage: `url(${product.imageUrl})`,
+                            }}
                           />
                           <span className="font-medium">{product.name}</span>
                         </div>
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <div 
-                            className="h-2 w-2 rounded-full" 
-                            style={{ backgroundColor: category?.color || 'gray' }}
-                          />
-                          <span>{category?.name || 'Unknown'}</span>
+                          <IconValue icon={product.category.icon!} />
+                          <span>{product.category.name || 'Unknown'}</span>
                         </div>
                       </td>
-                      <td className="py-3 px-4">${product.price.toFixed(2)}</td>
+                      <td className="py-3 px-4">
+                        ${toNumber(product.price).toFixed(2)}
+                      </td>
                       <td className="py-3 px-4">
                         <span className="font-medium text-rose-500">
                           {product.stockQuantity}
@@ -156,20 +162,24 @@ export function LowStockPage() {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <AlertTriangle className={`h-4 w-4 ${
-                            urgency === 'Out of Stock' 
-                              ? 'text-rose-500' 
-                              : urgency === 'Critical' 
-                                ? 'text-amber-500' 
+                          <AlertTriangle
+                            className={`h-4 w-4 ${
+                              urgency === 'Out of Stock'
+                                ? 'text-rose-500'
+                                : urgency === 'Critical'
+                                ? 'text-amber-500'
                                 : 'text-yellow-500'
-                          }`} />
-                          <span className={`text-sm font-medium ${
-                            urgency === 'Out of Stock' 
-                              ? 'text-rose-500' 
-                              : urgency === 'Critical' 
-                                ? 'text-amber-500' 
+                            }`}
+                          />
+                          <span
+                            className={`text-sm font-medium ${
+                              urgency === 'Out of Stock'
+                                ? 'text-rose-500'
+                                : urgency === 'Critical'
+                                ? 'text-amber-500'
                                 : 'text-yellow-500'
-                          }`}>
+                            }`}
+                          >
                             {urgency}
                           </span>
                         </div>
@@ -179,7 +189,10 @@ export function LowStockPage() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-6 text-center text-muted-foreground">
+                  <td
+                    colSpan={5}
+                    className="py-6 text-center text-muted-foreground"
+                  >
                     No products below the stock threshold
                   </td>
                 </tr>
@@ -188,7 +201,7 @@ export function LowStockPage() {
           </table>
         </div>
       </div>
-      
+
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           Showing {lowStockProducts.length} products below threshold

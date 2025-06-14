@@ -24,10 +24,12 @@ import {
   EditCategoryFormValues,
 } from '@/components/forms/edit-category-form';
 import { IconValue } from '@/components/icon-picker';
+import { useTranslation } from 'react-i18next';
 
 export function CategoriesPage() {
   const { categories, products, addCategory, updateCategory, deleteCategory } =
     useProducts();
+  const { t } = useTranslation();
 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
@@ -102,8 +104,10 @@ export function CategoriesPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Categories</h2>
-          <p className="text-muted-foreground">Manage product categories</p>
+          <h2 className="text-3xl font-bold tracking-tight">
+            {t('categories.title')}
+          </h2>
+          <p className="text-muted-foreground">{t('categories.subtitle')}</p>
         </div>
 
         <AddCategoryForm onSubmit={handleAddSubmit} />
@@ -114,10 +118,18 @@ export function CategoriesPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/50">
-                <th className="py-3 px-4 text-left font-medium">Category</th>
-                <th className="py-3 px-4 text-left font-medium">Description</th>
-                <th className="py-3 px-4 text-left font-medium">Products</th>
-                <th className="py-3 px-4 text-left font-medium">Actions</th>
+                <th className="py-3 px-4 text-left font-medium">
+                  {t('categories.table.headers.name')}
+                </th>
+                <th className="py-3 px-4 text-left font-medium">
+                  {t('categories.table.headers.description')}
+                </th>
+                <th className="py-3 px-4 text-left font-medium">
+                  {t('categories.table.headers.products')}
+                </th>
+                <th className="py-3 px-4 text-left font-medium">
+                  {t('categories.table.headers.actions')}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -144,7 +156,9 @@ export function CategoriesPage() {
                           onClick={() => openEditDialog(category.id)}
                         >
                           <Pencil className="h-4 w-4" />
-                          <span className="sr-only">Edit</span>
+                          <span className="sr-only">
+                            {t('categories.action.edit')}
+                          </span>
                         </Button>
 
                         <Button
@@ -154,7 +168,9 @@ export function CategoriesPage() {
                           onClick={() => openDeleteDialog(category.id)}
                         >
                           <Trash className="h-4 w-4" />
-                          <span className="sr-only">Delete</span>
+                          <span className="sr-only">
+                            {t('categories.action.delete')}
+                          </span>
                         </Button>
                       </div>
                     </td>

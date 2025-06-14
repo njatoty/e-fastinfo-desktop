@@ -38,9 +38,11 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const stockThreshbold = 5;
+
   // Get low stock products (stock < 5)
   const lowStockProducts = products.filter(
-    (product) => product.stockQuantity < 5
+    (product) => product.stockQuantity < stockThreshbold
   );
 
   // Calculate some random stats for demo purposes
@@ -51,12 +53,12 @@ export function DashboardPage() {
   const previousLowStock = 3; // Fake previous low stock count
   const lowStockChange = lowStockProducts.length - previousLowStock;
 
-  const inventoryData = categories.map((category) => ({
-    name: category.name,
-    value: products.filter((product) => product.categoryId === category.id)
-      .length,
-    icon: category.icon,
-  }));
+  // const inventoryData = categories.map((category) => ({
+  //   name: category.name,
+  //   value: products.filter((product) => product.categoryId === category.id)
+  //     .length,
+  //   icon: category.icon,
+  // }));
 
   const priceRangeData = [
     {
@@ -154,9 +156,7 @@ export function DashboardPage() {
                 </>
               )}
               <span className="ml-1 text-muted-foreground">
-                {t('dashboard.cards.inventoryValues.change', {
-                  period: 'month',
-                })}
+                {t('dashboard.cards.inventoryValues.change')}
               </span>
             </div>
           </CardContent>
@@ -285,6 +285,7 @@ export function DashboardPage() {
                     {priceRangeData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
+                        name={entry.name}
                         fill={`hsl(var(--chart-${(index % 5) + 1}))`}
                       />
                     ))}
@@ -305,10 +306,12 @@ export function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <AlertTriangle className="mr-2 h-5 w-5 text-amber-500" />
-            Low Stock Products
+            {t('dashboard.cards.lowStockItems.title')}
           </CardTitle>
           <CardDescription>
-            Products with fewer than 5 items in stock
+            {t('dashboard.cards.lowStockItems.subtitle', {
+              threshold: stockThreshbold,
+            })}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -317,10 +320,18 @@ export function DashboardPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="pb-2 text-left font-medium">Product</th>
-                    <th className="pb-2 text-left font-medium">Category</th>
-                    <th className="pb-2 text-left font-medium">Price</th>
-                    <th className="pb-2 text-right font-medium">Stock</th>
+                    <th className="pb-2 text-left font-medium">
+                      {t('products.table.headers.name')}
+                    </th>
+                    <th className="pb-2 text-left font-medium">
+                      {t('products.table.headers.category')}
+                    </th>
+                    <th className="pb-2 text-left font-medium">
+                      {t('products.table.headers.price')}
+                    </th>
+                    <th className="pb-2 text-right font-medium">
+                      {t('products.table.headers.stock')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -351,7 +362,9 @@ export function DashboardPage() {
                             <span>{category?.name || 'Unknown'}</span>
                           </div>
                         </td>
-                        <td className="py-3">${product.price.toFixed(2)}</td>
+                        <td className="py-3">
+                          ${toNumber(product.price).toFixed(2)}
+                        </td>
                         <td className="py-3 text-right">
                           <span className="font-medium text-rose-500">
                             {product.stockQuantity}
@@ -365,7 +378,7 @@ export function DashboardPage() {
             </div>
           ) : (
             <div className="py-6 text-center text-muted-foreground">
-              No products with low stock
+              {t('dashboard.cards.lowStockItems.emptyMessage')}
             </div>
           )}
         </CardContent>

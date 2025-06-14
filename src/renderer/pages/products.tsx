@@ -159,7 +159,7 @@ export function ProductsPage() {
         </Button>
       </div>
 
-      <Card className="flex flex-col gap-4 md:flex-row p-2">
+      <Card className="flex flex-col gap-4 md:flex-row p-2 sticky top-1 z-20">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input

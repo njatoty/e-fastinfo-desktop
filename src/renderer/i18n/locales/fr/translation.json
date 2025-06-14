@@ -19,7 +19,7 @@
       "inventoryValues": {
         "title": "Valeurs d'inventaire",
         "value": "{value}",
-        "change": "par rapport au {period} dernier"
+        "change": "par rapport au mois dernier"
       },
       "activeProducts": {
         "title": "Produits actifs",
@@ -28,8 +28,10 @@
       },
       "lowStockItems": {
         "title": "Articles en stock faible",
+        "subtitle": "Produits avec moins de {threshold} unités en stock",
         "value": "{value}",
-        "alert": "Nécessite une attention"
+        "alert": "Nécessite une attention",
+        "emptyMessage": "Aucun article en stock faible trouvé"
       },
       "totalCategories": {
         "title": "Catégories",
@@ -142,14 +144,69 @@
     "title": "Catégories",
     "subtitle": "Organisez vos produits",
     "actions": {
+      "save": "Enregistrer",
       "add": "Ajouter une catégorie",
-      "edit": "Modifier la catégorie"
+      "edit": "Modifier la catégorie",
+      "delete": "Supprimer la catégorie"
     },
     "table": {
       "headers": {
         "name": "Nom de la catégorie",
         "products": "Nombre de produits",
-        "status": "Statut"
+        "description": "Déscription",
+        "actions": "Actions"
+      }
+    },
+    "form": {
+      "title": "Ajouter une nouvelle catégorie",
+      "subtitle": "Créer une nouvelle catégorie pour organiser les produits",
+      "labels": {
+        "name": "Nom de la catégorie",
+        "description": "Déscription",
+        "icon": "Icône"
+      },
+      "placeholders": {
+        "name": "Entrer le nom de la catégorie",
+        "description": "Entrer la description de la catégorie",
+        "icon": "Séléctionner une icône"
+      },
+      "iconPicker": {
+        "title": "Sélectionner une icône",
+        "searchPlaceholder": "Rechercher des icônes...",
+        "categories": {
+          "package": "Colis",
+          "monitor": "Écran",
+          "headphones": "Casque",
+          "mouse": "Souris",
+          "keyboard": "Clavier",
+          "smartphone": "Smartphone",
+          "laptop": "Ordinateur portable",
+          "camera": "Appareil photo",
+          "speaker": "Haut-parleur",
+          "gamepad2": "Manette",
+          "tablet": "Tablette",
+          "watch": "Montre",
+          "tv": "Télévision",
+          "radio": "Radio",
+          "cpu": "Processeur",
+          "harddrive": "Disque dur",
+          "memorystick": "Clé USB",
+          "wifi": "Wifi",
+          "battery": "Batterie",
+          "zap": "Électricité",
+          "cable": "Câble",
+          "mic": "Micro",
+          "desktopcomputer": "Ordinateur de bureau"
+        },
+        "noResults": "Aucune icône trouvée pour {query}"
+      },
+      "actions": {
+        "save": "Enregistrer la catégorie",
+        "close": "Fermer",
+        "loadings": {
+          "save": "Enregistrement...",
+          "close": "Fermeture..."
+        }
       }
     },
     "messages": {

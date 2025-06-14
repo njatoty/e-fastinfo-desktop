@@ -24,6 +24,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus } from 'lucide-react';
 import { IconPicker } from '@/components/icon-picker';
+import { useTranslation } from 'react-i18next';
 
 const formSchema = z.object({
   name: z
@@ -52,6 +53,8 @@ export function AddCategoryForm({ onSubmit }: AddCategoryFormProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { t } = useTranslation();
+
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -79,15 +82,13 @@ export function AddCategoryForm({ onSubmit }: AddCategoryFormProps) {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Category
+          <Plus className="mr-2 h-4 w-4" /> {t('categories.actions.add')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Category</DialogTitle>
-          <DialogDescription>
-            Create a new category for organizing products.
-          </DialogDescription>
+          <DialogTitle>{t('categories.form.title')}</DialogTitle>
+          <DialogDescription>{t('categories.form.subtitle')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -100,9 +101,12 @@ export function AddCategoryForm({ onSubmit }: AddCategoryFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category Name</FormLabel>
+                  <FormLabel>{t('categories.form.labels.name')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter category name" {...field} />
+                    <Input
+                      placeholder={t('categories.form.placeholders.name')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -114,10 +118,14 @@ export function AddCategoryForm({ onSubmit }: AddCategoryFormProps) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>
+                    {t('categories.form.labels.description')}
+                  </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Enter category description"
+                      placeholder={t(
+                        'categories.form.placeholders.description'
+                      )}
                       rows={3}
                       {...field}
                     />
@@ -132,9 +140,13 @@ export function AddCategoryForm({ onSubmit }: AddCategoryFormProps) {
               name="icon"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Icon</FormLabel>
+                  <FormLabel>{t('categories.form.labels.icon')}</FormLabel>
                   <FormControl>
-                    <IconPicker value={field.value} onSelect={field.onChange} />
+                    <IconPicker
+                      placeholder={t('categories.form.placeholders.icon')}
+                      value={field.value}
+                      onSelect={field.onChange}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,7 +155,9 @@ export function AddCategoryForm({ onSubmit }: AddCategoryFormProps) {
 
             <DialogFooter>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Adding...' : 'Add Category'}
+                {isSubmitting
+                  ? t('categories.form.actions.loadings.save')
+                  : t('categories.form.actions.save')}
               </Button>
             </DialogFooter>
           </form>
