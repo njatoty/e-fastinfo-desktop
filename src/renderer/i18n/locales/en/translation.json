@@ -19,7 +19,7 @@
       "inventoryValues": {
         "title": "Inventory Values",
         "value": "{value}",
-        "change": "compared to the last {period}"
+        "change": "compared to the last month"
       },
       "activeProducts": {
         "title": "Active Products",
@@ -28,8 +28,10 @@
       },
       "lowStockItems": {
         "title": "Low Stock Items",
+        "subtitle": "Products with fewer than {threshold} items in stock",
         "value": "{value}",
-        "alert": "Needs attention"
+        "alert": "Needs attention",
+        "emptyMessage": "No products with low stock"
       },
       "totalCategories": {
         "title": "Categories",
@@ -143,13 +145,67 @@
     "subtitle": "Organize your products",
     "actions": {
       "add": "Add Category",
-      "edit": "Edit Category"
+      "edit": "Edit Category",
+      "delete": "Delete Category"
     },
     "table": {
       "headers": {
         "name": "Category Name",
         "products": "Number of Products",
-        "status": "Status"
+        "description": "Description",
+        "actions": "Actions"
+      }
+    },
+    "form": {
+      "title": "Add New Category",
+      "subtitle": "Create new category for organizing products",
+      "labels": {
+        "name": "Category Name",
+        "description": "Description",
+        "icon": "Icon"
+      },
+      "placeholders": {
+        "name": "Enter category name",
+        "description": "Enter category description",
+        "icon": "Select icon"
+      },
+      "iconPicker": {
+        "title": "Select icon",
+        "searchPlaceholder": "Search icons...",
+        "categories": {
+          "package": "Package",
+          "monitor": "Monitor",
+          "headphones": "Headphones",
+          "mouse": "Mouse",
+          "keyboard": "Keyboard",
+          "smartphone": "Smartphone",
+          "laptop": "Laptop",
+          "camera": "Camera",
+          "speaker": "Speaker",
+          "gamepad2": "Gamepad2",
+          "tablet": "Tablet",
+          "watch": "Watch",
+          "tv": "Tv",
+          "radio": "Radio",
+          "cpu": "Cpu",
+          "harddrive": "HardDrive",
+          "memorystick": "MemoryStick",
+          "wifi": "Wifi",
+          "battery": "Battery",
+          "zap": "Zap",
+          "cable": "Cable",
+          "mic": "Microphone",
+          "desktopcomputer": "Desktop Computer"
+        },
+        "noResults": "No icons found for '{query}'"
+      },
+      "actions": {
+        "save": "Save Category",
+        "close": "Close",
+        "loadings": {
+          "save": "Saving...",
+          "close": "Closing..."
+        }
       }
     },
     "messages": {

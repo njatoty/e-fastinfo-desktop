@@ -1,11 +1,17 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import { ProductStats, StockMovement } from '@/types';
 import { useAuth } from '@/context/auth-context';
 import {
   productService,
   ProductWithIncludes,
 } from '@/components/services/product.service';
-import type { Prisma, Product } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import {
   categoryService,
   CategoryWithIncludes,
@@ -30,9 +36,9 @@ interface ProductContextType {
     category: Prisma.CategoryUpdateInput
   ) => Promise<void>;
   deleteCategory: (id: string) => Promise<void>;
-  getProductsByCategory: (categoryId: string) => Product[];
-  getProductsWithLowStock: (threshold?: number) => Product[];
-  searchProducts: (query: string) => Product[];
+  getProductsByCategory: (categoryId: string) => ProductWithIncludes[];
+  getProductsWithLowStock: (threshold?: number) => ProductWithIncludes[];
+  searchProducts: (query: string) => ProductWithIncludes[];
   updateStock: (
     productId: string,
     update: Prisma.ProductUpdateInput
@@ -211,18 +217,24 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({
     return products.filter((product) => product.categoryId === categoryId);
   };
 
-  const getProductsWithLowStock = (threshold = 5) => {
-    return products.filter((product) => product.stockQuantity < threshold);
-  };
+  const getProductsWithLowStock = useCallback(
+    (threshold = 5) => {
+      return products.filter((product) => product.stockQuantity < threshold);
+    },
+    [products]
+  );
 
-  const searchProducts = (query: string) => {
-    const lowercaseQuery = query.toLowerCase();
-    return products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(lowercaseQuery) ||
-        product.description.toLowerCase().includes(lowercaseQuery)
-    );
-  };
+  const searchProducts = useCallback(
+    (query: string) => {
+      const lowercaseQuery = query.toLowerCase();
+      return products.filter(
+        (product) =>
+          product.name.toLowerCase().includes(lowercaseQuery) ||
+          product.description.toLowerCase().includes(lowercaseQuery)
+      );
+    },
+    [products]
+  );
 
   // New inventory management functions
   const updateStock = async (

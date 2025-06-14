@@ -24,8 +24,8 @@ export function AppLayout() {
           onSidebarOpenChange={setSidebarOpen}
         />
 
-        <ScrollArea className="flex-grow">
-          <main className="p-4 md:p-6 bg-muted/50">
+        <ScrollArea className="flex-grow bg-muted">
+          <main className="p-4 md:p-6">
             <Outlet />
           </main>
         </ScrollArea>
