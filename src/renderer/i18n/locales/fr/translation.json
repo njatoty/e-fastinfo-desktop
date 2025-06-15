@@ -231,5 +231,134 @@
       "singular": "Article en stock",
       "plural": "Articles en stock"
     }
+  },
+  "setup": {
+    "welcome": {
+      "title": "Bienvenue sur ElectroAdmin",
+      "subtitle": "Configurons votre système de gestion d'inventaire électronique"
+    },
+    "steps": {
+      "language": {
+        "title": "Sélection de la langue",
+        "description": "Choisissez votre langue préférée pour l'application"
+      },
+      "admin": {
+        "title": "Compte Administrateur",
+        "description": "Créez votre compte administrateur"
+      },
+      "company": {
+        "title": "Informations de l'Entreprise",
+        "description": "Configurez les détails de votre entreprise"
+      },
+      "preferences": {
+        "title": "Préférences",
+        "description": "Configurez les paramètres de l'application"
+      }
+    },
+    "form": {
+      "admin": {
+        "name": {
+          "label": "Nom Complet",
+          "placeholder": "Entrez votre nom complet",
+          "error": "Le nom doit contenir au moins 2 caractères."
+        },
+        "email": {
+          "label": "Adresse Email",
+          "placeholder": "admin@entreprise.com",
+          "error": "Veuillez entrer une adresse email valide."
+        },
+        "password": {
+          "label": "Mot de Passe",
+          "placeholder": "Créez un mot de passe fort",
+          "description": "Le mot de passe doit contenir au moins 8 caractères",
+          "error": "Le mot de passe doit contenir au moins 6 caractères."
+        },
+        "confirmPassword": {
+          "label": "Confirmez le Mot de Passe",
+          "placeholder": "Confirmez votre mot de passe",
+          "error": "Les mots de passe ne correspondent pas"
+        }
+      },
+      "company": {
+        "name": {
+          "label": "Nom de l'Entreprise",
+          "placeholder": "Nom de votre entreprise",
+          "description": "Ce nom sera affiché dans toute l'application",
+          "error": "Le nom de l'entreprise doit contenir au moins 2 caractères."
+        },
+        "email": {
+          "label": "Email de l'Entreprise",
+          "placeholder": "contact@entreprise.com",
+          "description": "Utilisé pour les notifications et communications clients",
+          "error": "Veuillez entrer un email d'entreprise valide."
+        },
+        "phone": {
+          "label": "Téléphone de l'Entreprise",
+          "placeholder": "Téléphone de votre entreprise",
+          "description": "Numéro de contact principal pour votre entreprise",
+          "error": "Le numéro de téléphone doit contenir 10 chiffres"
+        }
+      },
+      "preferences": {
+        "language": {
+          "label": "Langue",
+          "options": {
+            "en": "Anglais",
+            "fr": "Français"
+          },
+          "description": "Choisissez votre langue préférée pour l'application"
+        },
+        "theme": {
+          "label": "Thème",
+          "options": {
+            "light": "Clair",
+            "dark": "Sombre",
+            "system": "Système"
+          }
+        },
+        "currency": {
+          "label": "Devise"
+        },
+        "dateFormat": {
+          "label": "Format de Date",
+          "options": {
+            "MM/DD/YYYY": "MM/JJ/AAAA",
+            "DD/MM/YYYY": "JJ/MM/AAAA",
+            "YYYY-MM-DD": "AAAA-MM-JJ",
+            "DD-MM-YYYY": "JJ-MM-AAAA"
+          }
+        },
+        "timeZone": {
+          "label": "Fuseau Horaire",
+          "options": {
+            "UTC": "UTC",
+            "EST": "Heure de l'Est (EST)",
+            "CST": "Heure du Centre (CST)",
+            "MST": "Heure des Rocheuses (MST)",
+            "PST": "Heure du Pacifique (PST)",
+            "GMT": "GMT",
+            "CET": "Heure d'Europe Centrale"
+          }
+        },
+        "lowStockThreshold": {
+          "label": "Seuil de Stock Faible",
+          "placeholder": "5",
+          "description": "Alerte lorsque le stock descend en dessous de ce nombre",
+          "error": "Le seuil doit être d'au moins 1."
+        }
+      }
+    },
+    "navigation": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "complete": {
+        "default": "Terminer la Configuration",
+        "loading": "Configuration en cours..."
+      }
+    },
+    "toast": {
+      "success": "Configuration terminée avec succès !",
+      "error": "Échec de la configuration. Veuillez réessayer."
+    }
   }
 }
