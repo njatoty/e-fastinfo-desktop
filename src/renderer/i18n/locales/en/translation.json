@@ -230,5 +230,134 @@
       "singular": "Stock Item",
       "plural": "Stock Items"
     }
+  },
+  "setup": {
+    "welcome": {
+      "title": "Welcome to ElectroAdmin",
+      "subtitle": "Let's set up your electronics inventory management system"
+    },
+    "steps": {
+      "language": {
+        "title": "Language Selection",
+        "description": "Choose your preferred application language"
+      },
+      "admin": {
+        "title": "Admin Account",
+        "description": "Create your administrator account"
+      },
+      "company": {
+        "title": "Company Info",
+        "description": "Set up your company details"
+      },
+      "preferences": {
+        "title": "Preferences",
+        "description": "Configure application settings"
+      }
+    },
+    "form": {
+      "admin": {
+        "name": {
+          "label": "Full Name",
+          "placeholder": "Enter your full name",
+          "error": "Name must be at least 2 characters."
+        },
+        "email": {
+          "label": "Email Address",
+          "placeholder": "admin@company.com",
+          "error": "Please enter a valid email address."
+        },
+        "password": {
+          "label": "Password",
+          "placeholder": "Create a strong password",
+          "description": "Password must be at least 8 characters long",
+          "error": "Password must be at least 6 characters."
+        },
+        "confirmPassword": {
+          "label": "Confirm Password",
+          "placeholder": "Confirm your password",
+          "error": "Passwords don't match"
+        }
+      },
+      "company": {
+        "name": {
+          "label": "Company Name",
+          "placeholder": "Your Company Name",
+          "description": "This will be displayed throughout the application",
+          "error": "Company name must be at least 2 characters."
+        },
+        "email": {
+          "label": "Company Email",
+          "placeholder": "contact@company.com",
+          "description": "Used for notifications and customer communications",
+          "error": "Please enter a valid company email."
+        },
+        "phone": {
+          "label": "Company Phone",
+          "placeholder": "Your Company Phone",
+          "description": "Main contact number for your business",
+          "error": "Phone number must be 10 digits"
+        }
+      },
+      "preferences": {
+        "language": {
+          "label": "Language",
+          "options": {
+            "en": "English",
+            "fr": "French"
+          },
+          "description": "Choose your preferred language for the application"
+        },
+        "theme": {
+          "label": "Theme",
+          "options": {
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+          }
+        },
+        "currency": {
+          "label": "Currency"
+        },
+        "dateFormat": {
+          "label": "Date Format",
+          "options": {
+            "MM/DD/YYYY": "MM/DD/YYYY",
+            "DD/MM/YYYY": "DD/MM/YYYY",
+            "YYYY-MM-DD": "YYYY-MM-DD",
+            "DD-MM-YYYY": "DD-MM-YYYY"
+          }
+        },
+        "timeZone": {
+          "label": "Time Zone",
+          "options": {
+            "UTC": "UTC",
+            "EST": "Eastern Time (EST)",
+            "CST": "Central Time (CST)",
+            "MST": "Mountain Time (MST)",
+            "PST": "Pacific Time (PST)",
+            "GMT": "GMT",
+            "CET": "Central European Time"
+          }
+        },
+        "lowStockThreshold": {
+          "label": "Low Stock Threshold",
+          "placeholder": "5",
+          "description": "Alert when stock falls below this number",
+          "error": "Threshold must be at least 1."
+        }
+      }
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "complete": {
+        "default": "Complete Setup",
+        "loading": "Setting up..."
+      }
+    },
+    "toast": {
+      "success": "Setup completed successfully!",
+      "error": "Setup failed. Please try again."
+    }
   }
 }

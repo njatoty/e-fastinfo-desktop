@@ -123,4 +123,11 @@
     gap: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
   }
+  .radial-gradient {
+    background-image: radial-gradient(
+      circle at 50% 250%,
+      hsl(var(--muted)),
+      transparent
+    );
+  }
 }
