@@ -51,6 +51,13 @@ import { currencies } from '@/lib/data';
 import { Trans, useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
+const stepFields: Record<number, Array<keyof SetupFormValues>> = {
+  1: ['language'],
+  2: ['adminName', 'adminEmail', 'adminPassword', 'confirmPassword'],
+  3: ['companyName', 'companyEmail', 'companyPhone'],
+  4: ['theme', 'currency', 'dateFormat', 'lowStockThreshold'],
+};
+
 const setupFormSchema = z
   .object({
     // Admin Account
@@ -120,7 +127,7 @@ export function SetupPage() {
       companyName: '',
       companyEmail: undefined,
       companyPhone: undefined,
-      language: 'en',
+      language: 'fr',
       theme: 'system',
       currency: 'USD',
       dateFormat: 'MM/DD/YYYY',
@@ -129,12 +136,14 @@ export function SetupPage() {
   });
 
   const onSubmit = async (values: SetupFormValues) => {
+    const finalFields = stepFields[currentStep];
+    const isFinalValid = await form.trigger(finalFields);
+
+    if (!isFinalValid) return;
+
     setIsSubmitting(true);
 
     try {
-      // Simulate API call for setup
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
       // Store setup data
       localStorage.setItem('electronics-setup-complete', 'true');
       localStorage.setItem(
@@ -146,8 +155,6 @@ export function SetupPage() {
           role: 'admin',
         })
       );
-
-      // Store app settings
       localStorage.setItem(
         'electronics-app-settings',
         JSON.stringify({
@@ -171,14 +178,10 @@ export function SetupPage() {
   };
 
   const nextStep = async () => {
-    const fieldsToValidate =
-      currentStep === 1
-        ? ['adminName', 'adminEmail', 'adminPassword', 'confirmPassword']
-        : ['companyName', 'companyEmail'];
-
-    const isValid = await form.trigger(fieldsToValidate as any);
+    const currentFields = stepFields[currentStep] ?? [];
+    const isValid = await form.trigger(currentFields);
     if (isValid) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
@@ -240,7 +243,7 @@ export function SetupPage() {
 
                   return (
                     <div key={stepNumber} className="flex flex-1 items-center">
-                      <div className="flex flex-col flex-shrink-0 items-center w-[140px] border aspect-square">
+                      <div className="flex flex-col flex-shrink-0 items-center w-[140px] aspect-square">
                         <div
                           className={cn(
                             'flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors',
@@ -400,7 +403,7 @@ export function SetupPage() {
                                     className="pl-8"
                                     type="email"
                                     placeholder={t(
-                                      'setup.form.admin.email.email'
+                                      'setup.form.admin.email.placeholder'
                                     )}
                                     {...field}
                                   />
@@ -729,7 +732,7 @@ export function SetupPage() {
                         <Trans i18nKey="setup.navigation.previous" />
                       </Button>
 
-                      {currentStep < 3 ? (
+                      {currentStep < steps.length ? (
                         <Button type="button" onClick={nextStep}>
                           <Trans i18nKey="setup.navigation.next" />
                           <ArrowRight className="ml-2 h-4 w-4" />

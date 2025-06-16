@@ -74,8 +74,9 @@ model Staff {
   managedCategories Category[] @relation("StaffManagedCategories")
   processedOrders   Order[]    @relation("StaffProcessedOrders")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  AppSettings AppSettings? @relation("StaffSettings")
 
   @@map("staff_members") // Nom de table explicite
 }
@@ -274,4 +275,23 @@ model Discount {
 
   @@index([code])
   @@map("discounts")
+}
+
+model AppSettings {
+  id      String @id @default(uuid())
+  staff   Staff  @relation(name: "StaffSettings", fields: [staffId], references: [id])
+  staffId String @unique
+
+  companyName  String
+  companyEmail String?
+  companyPhone String?
+
+  language          String
+  theme             String // not enum: use string like "dark", "light"
+  currency          String
+  dateFormat        String
+  lowStockThreshold Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
