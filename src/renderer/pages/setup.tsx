@@ -50,6 +50,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { currencies } from '@/lib/data';
 import { Trans, useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { staffService } from '@/components/services/staff.service';
+import { SettingService } from '@/components/services/setting.service';
 
 const stepFields: Record<number, Array<keyof SetupFormValues>> = {
   1: ['language'],
@@ -113,7 +115,7 @@ type SetupFormValues = z.infer<typeof setupFormSchema>;
 
 export function SetupPage() {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { i18n, t } = useTranslation();
 
@@ -135,7 +137,7 @@ export function SetupPage() {
     },
   });
 
-  const onSubmit = async (values: SetupFormValues) => {
+  const onSubmit = async (values: SetupFormValues): Promise<void> => {
     const finalFields = stepFields[currentStep];
     const isFinalValid = await form.trigger(finalFields);
 
@@ -144,29 +146,37 @@ export function SetupPage() {
     setIsSubmitting(true);
 
     try {
-      // Store setup data
-      localStorage.setItem('electronics-setup-complete', 'true');
-      localStorage.setItem(
-        'electronics-admin-user',
-        JSON.stringify({
-          id: '1',
-          name: values.adminName,
-          email: values.adminEmail,
-          role: 'admin',
-        })
-      );
-      localStorage.setItem(
-        'electronics-app-settings',
-        JSON.stringify({
-          companyName: values.companyName,
-          companyEmail: values.companyEmail,
-          language: values.language,
-          theme: values.theme,
-          currency: values.currency,
-          dateFormat: values.dateFormat,
-          lowStockThreshold: values.lowStockThreshold,
-        })
-      );
+      // 1. Create the admin staff
+      const adminData = {
+        email: values.adminEmail,
+        name: values.adminName,
+        password: values.adminPassword,
+        role: 'admin' as const,
+      };
+
+      const staffResponse = await staffService.create(adminData);
+      const createdStaff = staffResponse.data;
+
+      if (!createdStaff) {
+        toast.error('Something went wrong!');
+        return;
+      }
+
+      // 2. Create associated settings
+      const settingsData = {
+        companyName: values.companyName,
+        companyEmail: values.companyEmail,
+        language: values.language,
+        theme: values.theme,
+        currency: values.currency,
+        dateFormat: values.dateFormat,
+        lowStockThreshold: values.lowStockThreshold,
+        staff: {
+          connect: { id: createdStaff.id },
+        },
+      };
+
+      await SettingService.createSettings(settingsData);
 
       toast.success('Setup completed successfully!');
       navigate('/');

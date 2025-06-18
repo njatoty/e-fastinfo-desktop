@@ -60,8 +60,8 @@ datasource db {
 
 model Staff {
   id        String  @id @default(uuid())
-  email     String  @unique
-  name      String
+  email     String?
+  name      String  @unique
   phone     String?
   address   String?
   avatarUrl String?

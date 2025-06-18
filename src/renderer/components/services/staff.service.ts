@@ -42,6 +42,27 @@ export const staffService = {
   },
 
   /**
+   * Find staffs by filtering with query
+   */
+  findStaffs: async (
+    filter: Prisma.StaffWhereInput
+  ): Promise<{ data: Staff[] | null; error: string | null }> => {
+    try {
+      const staffMember = await prisma.staff.findMany({
+        where: { ...filter },
+        include: {
+          managedProducts: true,
+          managedCategories: true,
+          processedOrders: true,
+        },
+      });
+      return { data: staffMember, error: null };
+    } catch (error) {
+      return handleServiceError(error, 'staffService.getById');
+    }
+  },
+
+  /**
    * Creates a new staff member.
    * NOTE: Password should be hashed *before* being passed to this function.
    * @param {object} staffData - Data for the new staff member.
