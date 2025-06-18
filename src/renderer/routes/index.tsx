@@ -13,49 +13,17 @@ import { StockMovementsPage } from '@/pages/stock-movements';
 import { StaffPage } from '@/pages/staff';
 import { SettingsPage } from '@/pages/settings';
 import ElectronLayout from '@/components/layout/electron-layout';
-import { SetupPage } from '@/pages/setup';
-
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        Loading...
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};
-
-const SetupGuard = ({ children }: { children: React.ReactNode }) => {
-  const isSetupComplete = localStorage.getItem('electronics-setup-complete');
-
-  if (!isSetupComplete) {
-    return <Navigate to="/setup" replace />;
-  }
-
-  return <>{children}</>;
-};
+import { ProtectedRoute } from './protected';
+import { SetupGuard } from './setup-guard';
+import { SetupRoute } from './setup-route';
 
 export const AppRoutes = () => {
   const { isAuthenticated } = useAuth();
-  const isSetupComplete = localStorage.getItem('electronics-setup-complete');
 
   return (
     <Routes>
       <Route element={<ElectronLayout />}>
-        <Route
-          path="/setup"
-          element={
-            isSetupComplete ? <Navigate to="/" replace /> : <SetupPage />
-          }
-        />
+        <Route path="/setup" element={<SetupRoute />} />
         <Route
           path="/login"
           element={
